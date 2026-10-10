@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandMark } from "@/components/brand-mark";
 
 /**
  * Root-level 404 fallback. Renders when a 404 is triggered OUTSIDE the
@@ -13,11 +14,8 @@ export default function RootNotFound() {
   return (
     <div className="relative flex min-h-svh flex-col items-center justify-center px-4 text-center">
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-50" />
-      <div className="glow-primary pointer-events-none absolute inset-0 opacity-30" />
 
-      <span className="grid h-14 w-14 place-items-center rounded-xl bg-primary text-primary-foreground shadow-soft">
-        <span className="font-mono text-lg font-bold">{"{}"}</span>
-      </span>
+      <BrandMark size={56} />
 
       <p className="mt-8 text-6xl font-bold tracking-tight">404</p>
       <h1 className="mt-4 text-xl font-semibold">

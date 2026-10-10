@@ -13,6 +13,12 @@ describe("tool registry", () => {
     expect(TOOLKIT.get("json-diff")).toBeUndefined();
   });
 
+  it("uses portable icon names rather than platform-dependent emoji", () => {
+    for (const tool of TOOLKIT.all) {
+      expect(tool.icon).toMatch(/^[a-z]+(?:-[a-z]+)*$/);
+    }
+  });
+
   it("rejects duplicate ids and slugs", () => {
     const tool = TOOLKIT.all[0];
     expect(() => createToolRegistry([tool, tool])).toThrow(/Duplicate tool/);

@@ -10,10 +10,9 @@ import {
   Check,
   Download,
   Trash2,
-  Wand2,
+  FileText,
   CircleCheck,
   TriangleAlert,
-  FileText,
 } from "lucide-react";
 import { useJsonWorker } from "@/hooks/use-json-worker";
 import { useCopy } from "@/hooks/use-copy";
@@ -43,6 +42,7 @@ const MonacoEditor = dynamic(() => import("@/components/editor/monaco-editor"), 
 interface JsonRepairProps {
   title: string;
   description: string;
+  embedded?: boolean;
 }
 
 /**
@@ -50,7 +50,7 @@ interface JsonRepairProps {
  * valid JSON). Uses the jsonrepair library via the worker pipeline so big
  * inputs don't block the UI.
  */
-export function JsonRepair({ title, description }: JsonRepairProps) {
+export function JsonRepair({ title, description, embedded = false }: JsonRepairProps) {
   const t = useTranslations("repair");
   const tEditor = useTranslations("editor");
   const tErrors = useTranslations("errors");
@@ -135,9 +135,9 @@ export function JsonRepair({ title, description }: JsonRepairProps) {
   const processing = repairState === "processing";
 
   return (
-    <div className="mx-auto flex min-h-[calc(100svh-4rem)] overflow-y-auto md:h-[calc(100svh-4rem)] md:overflow-hidden max-w-[1600px] flex-col px-4 py-5 sm:px-6">
+    <div className={cn("flex min-w-0 flex-col", embedded ? "min-h-[700px] p-4 sm:p-5 xl:h-[calc(100svh-16rem)] xl:min-h-[650px]" : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
       {/* Header */}
-      <div className="mb-4">
+      {!embedded && <div className="mb-4">
         <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight sm:text-2xl">
           {title}
           <kbd className="hidden shrink-0 items-center gap-0.5 rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px] font-normal text-muted-foreground sm:inline-flex">
@@ -145,7 +145,7 @@ export function JsonRepair({ title, description }: JsonRepairProps) {
           </kbd>
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-      </div>
+      </div>}
 
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 shadow-soft">
@@ -181,7 +181,7 @@ export function JsonRepair({ title, description }: JsonRepairProps) {
         />
         <ToolButton
           label={t("sample")}
-          icon={<Wand2 className="h-4 w-4" />}
+          icon={<FileText className="h-4 w-4" />}
           onClick={handleLoadSample}
         />
         <ToolButton

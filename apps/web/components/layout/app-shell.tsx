@@ -1,17 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FileText, Home, Menu, Moon, PanelLeftClose, PanelLeftOpen, Settings2, X } from "lucide-react";
+import {
+  Home,
+  LayoutGrid,
+  Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { TOOLS } from "@parsy/ui";
 import { Link, usePathname } from "@/i18n/navigation";
 import { BrandMark } from "@/components/brand-mark";
+import { ToolIcon } from "@/components/tool-icon";
 import { LanguageToggle } from "@/components/language-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SiteFooter } from "@/components/layout/site-header";
 import { cn } from "@/lib/utils";
-
-const fileSlugs = new Set(["word-parser", "excel-parser", "pdf-parser"]);
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const t = useTranslations("site");
@@ -20,38 +27,135 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const live = TOOLS.filter((tool) => tool.available);
-  const jsonTools = live.filter((tool) => !fileSlugs.has(tool.slug));
-  const fileTools = live.filter((tool) => fileSlugs.has(tool.slug));
 
   useEffect(() => setMobileOpen(false), [pathname]);
 
-  const navigation = (mobile = false) => (
-    <div className={cn("flex flex-col gap-6", mobile && "px-3 py-5")}>
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [mobileOpen]);
+
+  const navigation = (compact = false, mobile = false) => (
+    <nav aria-label={t("workspace")} className={cn("space-y-6", compact ? "px-2" : "px-3")}>
       <div>
-        <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/70">{t("workspace")}</p>
-        <Link href="/" className={cn("flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors", pathname === "/" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground")}><Home className="h-4 w-4" />{t("home")}</Link>
+        <NavLink
+          href="/"
+          label={t("home")}
+          icon={Home}
+          active={pathname === "/"}
+          compact={compact}
+          onNavigate={mobile ? () => setMobileOpen(false) : undefined}
+        />
       </div>
-      <ToolSection title={t("jsonTools")} tools={jsonTools} pathname={pathname} tTools={tTools} />
-      <ToolSection title={t("fileTools")} tools={fileTools} pathname={pathname} tTools={tTools} />
-    </div>
+
+      <div>
+        {compact ? (
+          <div className="mx-auto mb-3 h-px w-8 bg-border" aria-hidden />
+        ) : (
+          <div className="mb-2 flex items-center justify-between px-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">
+              {t("toolsNav")}
+            </p>
+            <span className="text-[11px] tabular-nums text-muted-foreground/70">{live.length}</span>
+          </div>
+        )}
+        <div className="space-y-1">
+          {live.map((tool) => (
+            <NavLink
+              key={tool.slug}
+              href={tool.href}
+              label={tTools(`${tool.slug}.short`)}
+              iconName={tool.icon}
+              active={pathname === tool.href}
+              compact={compact}
+              onNavigate={mobile ? () => setMobileOpen(false) : undefined}
+            />
+          ))}
+        </div>
+      </div>
+    </nav>
   );
 
   return (
     <div className="min-h-svh bg-background">
-      <aside className={cn("fixed inset-y-0 left-0 z-50 hidden flex-col border-r border-border/80 bg-card/75 backdrop-blur-xl transition-[width] duration-200 md:flex", collapsed ? "w-[76px]" : "w-64")}>
-        <div className={cn("flex h-[4.5rem] items-center border-b border-border/70 px-4", collapsed ? "justify-center" : "justify-between")}>
-          <Link href="/" className="flex items-center gap-3"><BrandMark size={34} /><span className={cn("text-base font-semibold tracking-tight", collapsed && "sr-only")}>{t("name")}</span></Link>
-          {!collapsed && <button type="button" onClick={() => setCollapsed(true)} className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground" aria-label={t("collapseSidebar")}><PanelLeftClose className="h-4 w-4" /></button>}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 hidden flex-col border-r border-border/80 bg-card transition-[width] duration-200 md:flex",
+          collapsed ? "w-[68px]" : "w-56",
+        )}
+      >
+        <div className={cn("flex h-[4.5rem] shrink-0 items-center border-b border-border/70", collapsed ? "justify-center" : "px-4")}>
+          <Link href="/" className="flex items-center gap-2.5" aria-label={t("name")}>
+            <BrandMark size={32} />
+            {!collapsed && <span className="text-[15px] font-semibold tracking-tight">{t("name")}</span>}
+          </Link>
         </div>
-        <div className={cn("flex-1 overflow-y-auto py-6", collapsed && "px-2")}>{collapsed ? <div className="flex flex-col items-center gap-2"><Link href="/" className="rounded-xl p-3 text-muted-foreground hover:bg-muted"><Home className="h-4 w-4" /></Link>{live.map((tool) => <Link key={tool.slug} href={tool.href} title={tTools(`${tool.slug}.title`)} className={cn("rounded-xl p-3 text-lg", pathname === tool.href ? "bg-primary/10" : "hover:bg-muted")}>{tool.icon}</Link>)}</div> : navigation()}</div>
-        <div className={cn("border-t border-border/70 p-4", collapsed && "flex justify-center px-2")}><button type="button" onClick={() => setCollapsed(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"><PanelLeftOpen className="h-4 w-4" /><span className={collapsed ? "sr-only" : ""}>{t("expandSidebar")}</span></button></div>
+
+        <div className="flex-1 overflow-y-auto py-5">{navigation(collapsed)}</div>
+
+        <div className={cn("shrink-0 border-t border-border/70 p-3", collapsed && "px-2")}>
+          <button
+            type="button"
+            onClick={() => setCollapsed((value) => !value)}
+            aria-label={collapsed ? t("expandSidebar") : t("collapseSidebar")}
+            aria-expanded={!collapsed}
+            title={collapsed ? t("expandSidebar") : undefined}
+            className={cn(
+              "flex h-10 items-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:text-foreground",
+              collapsed ? "w-full justify-center" : "w-full gap-3 px-3 text-sm",
+            )}
+          >
+            {collapsed ? <PanelLeftOpen className="h-[18px] w-[18px]" /> : <PanelLeftClose className="h-[18px] w-[18px]" />}
+            {!collapsed && <span>{t("collapseSidebar")}</span>}
+          </button>
+        </div>
       </aside>
 
-      {mobileOpen && <div className="fixed inset-0 z-40 bg-slate-950/25 md:hidden" onClick={() => setMobileOpen(false)} />}
-      <aside className={cn("fixed inset-y-0 left-0 z-50 w-[min(88vw,300px)] border-r border-border bg-card shadow-2xl transition-transform md:hidden", mobileOpen ? "translate-x-0" : "-translate-x-full")}><div className="flex h-[4.5rem] items-center justify-between border-b border-border px-4"><Link href="/" className="flex items-center gap-3"><BrandMark size={34} /><span className="font-semibold">{t("name")}</span></Link><button type="button" onClick={() => setMobileOpen(false)} className="rounded-lg p-2 text-muted-foreground hover:bg-muted"><X className="h-5 w-5" /></button></div>{navigation(true)}</aside>
+      {mobileOpen && (
+        <button
+          type="button"
+          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+          onClick={() => setMobileOpen(false)}
+          aria-label={t("closeMenu")}
+        />
+      )}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex w-[min(84vw,280px)] flex-col border-r border-border bg-card shadow-2xl transition-transform md:hidden",
+          mobileOpen ? "translate-x-0" : "-translate-x-full",
+        )}
+        aria-hidden={!mobileOpen}
+        inert={!mobileOpen}
+      >
+        <div className="flex h-[4.5rem] shrink-0 items-center justify-between border-b border-border px-4">
+          <Link href="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5">
+            <BrandMark size={32} />
+            <span className="font-semibold">{t("name")}</span>
+          </Link>
+          <button type="button" onClick={() => setMobileOpen(false)} className="rounded-lg p-2 text-muted-foreground hover:bg-muted" aria-label={t("closeMenu")}>
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto py-5">{navigation(false, true)}</div>
+      </aside>
 
-      <div className="md:pl-64" style={collapsed ? { paddingLeft: "76px" } : undefined}>
-        <header className="sticky top-0 z-30 flex h-[4.5rem] items-center justify-between border-b border-border/70 bg-background/80 px-4 backdrop-blur-xl sm:px-6"><div className="flex items-center gap-3"><button type="button" onClick={() => setMobileOpen(true)} className="rounded-xl p-2 text-muted-foreground hover:bg-muted md:hidden" aria-label={t("openMenu")}><Menu className="h-5 w-5" /></button><div className="hidden items-center gap-2 text-sm text-muted-foreground sm:flex"><FileText className="h-4 w-4" /><span>{t("workspace")}</span></div></div><div className="flex items-center gap-1"><LanguageToggle /><ThemeToggle /></div></header>
+      <div className={cn("transition-[padding] duration-200", collapsed ? "md:pl-[68px]" : "md:pl-56")}>
+        <header className="sticky top-0 z-30 flex h-[4.5rem] items-center justify-between border-b border-border/70 bg-background/80 px-4 backdrop-blur-xl sm:px-6">
+          <div className="flex items-center gap-3">
+            <button type="button" onClick={() => setMobileOpen(true)} className="rounded-lg p-2 text-muted-foreground hover:bg-muted md:hidden" aria-label={t("openMenu")}>
+              <Menu className="h-5 w-5" />
+            </button>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <LayoutGrid className="h-4 w-4" />
+              <span>{t("workspace")}</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1"><LanguageToggle /><ThemeToggle /></div>
+        </header>
         <main className="min-h-[calc(100vh-9rem)]">{children}</main>
         <SiteFooter />
       </div>
@@ -59,6 +163,43 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ToolSection({ title, tools, pathname, tTools }: { title: string; tools: typeof TOOLS; pathname: string; tTools: (key: string) => string }) {
-  return <div><p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/70">{title}</p><div className="space-y-0.5">{tools.map((tool) => <Link key={tool.slug} href={tool.href} className={cn("flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors", pathname === tool.href ? "bg-primary/10 font-medium text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground")}><span className="w-5 text-center text-base" aria-hidden>{tool.icon}</span><span className="truncate">{tTools(`${tool.slug}.short`)}</span></Link>)}</div></div>;
+function NavLink({
+  href,
+  label,
+  icon: Icon,
+  iconName,
+  active,
+  compact,
+  onNavigate,
+}: {
+  href: string;
+  label: string;
+  icon?: LucideIcon;
+  iconName?: string;
+  active: boolean;
+  compact: boolean;
+  onNavigate?: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onNavigate}
+      aria-label={compact ? label : undefined}
+      aria-current={active ? "page" : undefined}
+      title={compact ? label : undefined}
+      className={cn(
+        "group relative flex h-10 items-center rounded-lg text-sm transition-colors focus-visible:text-primary",
+        compact ? "justify-center" : "gap-3 px-3",
+        active ? "bg-primary/[0.09] font-medium text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground",
+      )}
+    >
+      {active && <span aria-hidden className="absolute bottom-2 left-0 top-2 w-[3px] rounded-full bg-primary" />}
+      {Icon ? (
+        <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={active ? 2.1 : 1.8} aria-hidden />
+      ) : (
+        <ToolIcon name={iconName ?? ""} className="h-[18px] w-[18px] shrink-0" strokeWidth={active ? 2.1 : 1.8} />
+      )}
+      {!compact && <span className="truncate">{label}</span>}
+    </Link>
+  );
 }

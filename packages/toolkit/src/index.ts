@@ -16,7 +16,7 @@ export interface ToolDefinition {
   slug: string;
   /** Route without locale prefix. */
   href: `/${string}`;
-  /** Emoji/icon token used by navigation and cards. */
+  /** Semantic icon token resolved by each host UI (not an emoji or renderer). */
   icon: string;
   category: ToolCategory;
   status: ToolStatus;
@@ -76,10 +76,10 @@ export function createToolRegistry(
 }
 
 const definitions = [
-  { id: "json", slug: "json", href: "/json", icon: "{ }", category: "json", status: "available", renderer: "json-workspace", messages: { tool: "tools.json", metadata: "metadata.json" } },
-  { id: "word-parser", slug: "word-parser", href: "/word-parser", icon: "📄", category: "utility", status: "available", renderer: "file-parser", messages: { tool: "tools.word-parser", metadata: "metadata.file-parser" } },
-  { id: "excel-parser", slug: "excel-parser", href: "/excel-parser", icon: "📊", category: "utility", status: "available", renderer: "file-parser", messages: { tool: "tools.excel-parser", metadata: "metadata.file-parser" } },
-  { id: "pdf-parser", slug: "pdf-parser", href: "/pdf-parser", icon: "📑", category: "utility", status: "available", renderer: "file-parser", messages: { tool: "tools.pdf-parser", metadata: "metadata.file-parser" } },
+  { id: "json", slug: "json", href: "/json", icon: "braces", category: "json", status: "available", renderer: "json-workspace", messages: { tool: "tools.json", metadata: "metadata.json" } },
+  { id: "word-parser", slug: "word-parser", href: "/word-parser", icon: "file-text", category: "utility", status: "available", renderer: "file-parser", messages: { tool: "tools.word-parser", metadata: "metadata.file-parser" } },
+  { id: "excel-parser", slug: "excel-parser", href: "/excel-parser", icon: "table", category: "utility", status: "available", renderer: "file-parser", messages: { tool: "tools.excel-parser", metadata: "metadata.file-parser" } },
+  { id: "pdf-parser", slug: "pdf-parser", href: "/pdf-parser", icon: "file-search", category: "utility", status: "available", renderer: "file-parser", messages: { tool: "tools.pdf-parser", metadata: "metadata.file-parser" } },
 ] as const satisfies readonly ToolDefinition[];
 
 /** Default registry used by Toolora's web app. */

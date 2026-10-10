@@ -20,7 +20,7 @@ const TYPE_COLORS: Record<JsonType, string> = {
   array: "text-primary",
   string: "text-success",
   number: "text-warning",
-  boolean: "text-purple-500 dark:text-purple-400",
+  boolean: "text-primary",
   null: "text-muted-foreground",
 };
 

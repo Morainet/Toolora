@@ -32,6 +32,7 @@ interface JsonToolProps {
   title: string;
   description: string;
   showModeSwitch?: boolean;
+  embedded?: boolean;
 }
 
 /**
@@ -62,7 +63,7 @@ function useLocalizedErrorMessage() {
  *   user input → worker (or main-thread fallback) → output editor
  *   + live, debounced validation → status bar + error line highlight
  */
-export function JsonTool({ initialMode, title, description, showModeSwitch = true }: JsonToolProps) {
+export function JsonTool({ initialMode, title, description, showModeSwitch = true, embedded = false }: JsonToolProps) {
   const t = useTranslations("tool");
   const tEditor = useTranslations("editor");
   const localizeError = useLocalizedErrorMessage();
@@ -190,15 +191,6 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
     }
   }, [input, process, setStatus, t]);
 
-  const runPrimary = React.useCallback(
-    (nextMode: ToolMode) => {
-      if (nextMode === "format") void handleFormat();
-      else if (nextMode === "minify") void handleMinify();
-      else void handleValidate();
-    },
-    [handleFormat, handleMinify, handleValidate],
-  );
-
   const handlePrimary = React.useCallback(() => {
     if (mode === "format") void handleFormat();
     else if (mode === "minify") void handleMinify();
@@ -234,8 +226,9 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
 
   const handleLoadSample = React.useCallback(() => {
     setInput(SAMPLE_JSON);
-    setTimeout(() => runPrimary(initialMode), 0);
-  }, [setInput, runPrimary, initialMode]);
+    setOutput("");
+    setStatus({ state: "idle", error: null, durationMs: null });
+  }, [setInput, setOutput, setStatus]);
 
   const handleModeChange = React.useCallback((next: ToolMode) => {
     setMode(next);
@@ -250,9 +243,9 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
     status.state === "invalid" && status.error ? status.error.line : null;
 
   return (
-    <div className="mx-auto flex min-h-[calc(100svh-4rem)] overflow-y-auto md:h-[calc(100svh-4rem)] md:overflow-hidden max-w-[1600px] flex-col px-4 py-5 sm:px-6">
+    <div className={cn("flex min-w-0 flex-col", embedded ? "min-h-[700px] p-4 sm:p-5 xl:h-[calc(100svh-16rem)] xl:min-h-[650px]" : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
       {/* Header */}
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+      {!embedded && <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight sm:text-2xl">
             {title}
@@ -263,10 +256,11 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
           <p className="mt-1 text-sm text-muted-foreground">{description}</p>
         </div>
         {showModeSwitch && <ModeSwitch mode={mode} onChange={handleModeChange} />}
-      </div>
+      </div>}
 
       {/* Toolbar */}
       <Toolbar
+        mode={mode}
         processing={status.state === "processing"}
         hasInput={hasInput}
         hasOutput={hasOutput}
@@ -358,27 +352,20 @@ function Pane({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={cn(
-        "relative overflow-hidden rounded-xl border border-border bg-card shadow-soft",
-        className,
-      )}
-    >
-      <div className="pointer-events-none absolute left-3 top-3 z-10 flex items-center gap-2">
-        <span className="select-none rounded-md bg-background/80 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground backdrop-blur">
-          {label}
-        </span>
+    <div className={cn("flex min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-card shadow-soft", className)}>
+      <div className="flex h-10 shrink-0 items-center gap-2 border-b border-border/70 bg-muted/25 px-3.5">
+        <span className="text-xs font-semibold tracking-wide text-foreground">{label}</span>
         {badge && (
           <span
             className={cn(
-              "h-1.5 w-1.5 rounded-full",
+              "ml-auto h-1.5 w-1.5 rounded-full",
               badge === "input" ? "bg-primary/70" : "bg-success",
             )}
             aria-hidden
           />
         )}
       </div>
-      <div className="h-full w-full pt-9">{children}</div>
+      <div className="min-h-0 flex-1">{children}</div>
     </div>
   );
 }

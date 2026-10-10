@@ -3,11 +3,13 @@
     "name": "Toolora",
     "workspace": "Workspace",
     "home": "Overview",
+    "toolsNav": "All tools",
     "jsonTools": "JSON tools",
     "fileTools": "File tools",
     "collapseSidebar": "Collapse sidebar",
     "expandSidebar": "Expand sidebar",
     "openMenu": "Open menu",
+    "closeMenu": "Close menu",
     "tagline": "Fast, private, local-first developer tools",
     "description": "An extensible local-first toolkit for JSON, Word, Excel, PDF, and more. Everything runs in your browser.",
     "footerPrivacy": "Your data never leaves your browser",
@@ -47,9 +49,9 @@
       "description": "Format, minify, validate, inspect, compare, repair, and convert JSON on one page."
     },
     "json-formatter": {
-      "title": "JSON Toolkit",
-      "short": "JSON tools",
-      "description": "Format, minify, and validate JSON in one focused workspace."
+      "title": "JSON Formatter",
+      "short": "Formatter",
+      "description": "Apply consistent indentation and line breaks to make JSON easier to read."
     },
     "json-validator": {
       "title": "JSON Validator",
@@ -95,6 +97,22 @@
       "title": "PDF File Parser",
       "short": "PDF Parser",
       "description": "Extract PDF text locally in your browser without a PDF reader."
+    }
+  },
+  "jsonWorkspace": {
+    "eyebrow": "Developer tools / JSON",
+    "toolCount": "{count} capabilities",
+    "localOnly": "Processed locally",
+    "modeNavigation": "JSON tools navigation",
+    "shortcut": "⌘ / Ctrl + Enter to run",
+    "hints": {
+      "format": "Clean up structure",
+      "minify": "Remove whitespace",
+      "validate": "Find syntax errors",
+      "tree": "Explore nested data",
+      "diff": "Compare two inputs",
+      "repair": "Fix malformed JSON",
+      "converter": "Generate type definitions"
     }
   },
   "home": {
@@ -205,7 +223,7 @@
       "copied": "Copied!",
       "download": "Download",
       "clear": "Clear",
-      "sample": "Sample",
+      "sample": "Load sample",
       "indent": "Indent",
       "indentLabel": "Indentation",
       "indent2": "2 spaces",

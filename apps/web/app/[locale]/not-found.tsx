@@ -3,6 +3,7 @@ import { ArrowRight, Home } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { TOOLS } from "@parsy/ui";
 import { BrandMark } from "@/components/brand-mark";
+import { ToolIcon } from "@/components/tool-icon";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -16,13 +17,10 @@ export default function NotFound() {
 
   return (
     <div className="relative mx-auto flex min-h-[70svh] max-w-2xl flex-col items-center justify-center px-4 py-20 text-center">
-      {/* Glow backdrop */}
-      <div className="glow-primary pointer-events-none absolute inset-0 -z-10 opacity-40" />
-
       <BrandMark size={56} className="mb-8" />
 
       {/* Big 404 */}
-      <p className="text-gradient text-7xl font-bold tracking-tight sm:text-8xl">
+      <p className="text-primary text-7xl font-bold tracking-tight sm:text-8xl">
         {t("code")}
       </p>
 
@@ -53,7 +51,7 @@ export default function NotFound() {
               href={tool.href}
               className="group inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium text-muted-foreground shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:text-foreground"
             >
-              <span aria-hidden>{tool.icon}</span>
+              <ToolIcon name={tool.icon} className="h-4 w-4" />
               {tTools(`${tool.slug}.short`)}
               <ArrowRight className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
             </Link>

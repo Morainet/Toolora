@@ -21,6 +21,7 @@ import { TOOLS as TOOL_DEFINITIONS } from "@parsy/toolkit";
 export interface ToolEntry {
   slug: string;
   href: string;
+  /** Semantic icon token rendered by the host UI. */
   icon: string;
   available: boolean;
 }

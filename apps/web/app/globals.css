@@ -9,33 +9,33 @@
 /* ----------------------------------------------------------------------------
  * Design tokens — Tailwind v4 CSS-first `@theme`.
  * Light-first (per project decision), with a polished dark counterpart.
- * Palette: cool slate neutrals + a single indigo accent + green/amber/red
- * semantic colors. Tokens are tuned for WCAG AA contrast in both modes.
+ * Palette C: crisp blue-white surfaces with a clear SaaS-blue accent.
+ * Semantic colors remain distinct from the brand color.
  * -------------------------------------------------------------------------- */
 @theme {
   /* surfaces & text (light) */
-  --color-background: hsl(228 38% 97%);
-  --color-foreground: hsl(222 47% 11%);
+  --color-background: #f7f9fc;
+  --color-foreground: #182230;
 
-  --color-card: hsl(0 0% 100%);
-  --color-card-foreground: hsl(222 47% 11%);
+  --color-card: #ffffff;
+  --color-card-foreground: #182230;
 
-  --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(222 47% 11%);
+  --color-popover: #ffffff;
+  --color-popover-foreground: #182230;
 
-  /* primary = indigo, the single brand accent */
-  --color-primary: hsl(252 83% 63%);
-  --color-primary-foreground: hsl(210 40% 98%);
-  --color-primary-soft: hsl(248 100% 97%);
+  /* Blue is reserved for actions and active states. */
+  --color-primary: #175cd3;
+  --color-primary-foreground: #ffffff;
+  --color-primary-soft: #eaf1ff;
 
-  --color-secondary: hsl(214 32% 95%);
-  --color-secondary-foreground: hsl(222 47% 14%);
+  --color-secondary: #eef3f9;
+  --color-secondary-foreground: #243247;
 
-  --color-muted: hsl(214 32% 96%);
-  --color-muted-foreground: hsl(215 18% 42%);
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #526174;
 
-  --color-accent: hsl(214 32% 95%);
-  --color-accent-foreground: hsl(222 47% 14%);
+  --color-accent: #eaf1ff;
+  --color-accent-foreground: #173f8a;
 
   /* semantic */
   --color-destructive: hsl(0 72% 51%);
@@ -45,42 +45,42 @@
   --color-warning: hsl(35 92% 50%);
   --color-warning-foreground: hsl(0 0% 100%);
 
-  --color-border: hsl(228 25% 89%);
-  --color-input: hsl(214 28% 90%);
-  --color-ring: hsl(239 84% 60%);
+  --color-border: #dce4ef;
+  --color-input: #dce4ef;
+  --color-ring: #175cd3;
 
   /* radii + type */
   --radius: 0.8rem;
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+  --font-sans: ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB",
     "Noto Sans CJK SC", Roboto, sans-serif;
-  --font-mono: var(--font-geist-mono), "JetBrains Mono", "Fira Code",
+  --font-mono: "JetBrains Mono", "Fira Code",
     ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 /* Dark theme overrides — applied under the `.dark` class. */
 .dark {
-  --color-background: hsl(222 47% 7%);
-  --color-foreground: hsl(210 40% 98%);
+  --color-background: #171d29;
+  --color-foreground: #f4f7fb;
 
-  --color-card: hsl(222 44% 10%);
-  --color-card-foreground: hsl(210 40% 98%);
+  --color-card: #202a3a;
+  --color-card-foreground: #f4f7fb;
 
-  --color-popover: hsl(222 44% 10%);
-  --color-popover-foreground: hsl(210 40% 98%);
+  --color-popover: #202a3a;
+  --color-popover-foreground: #f4f7fb;
 
-  --color-primary: hsl(243 75% 67%);
-  --color-primary-foreground: hsl(222 47% 11%);
-  --color-primary-soft: hsl(243 50% 18%);
+  --color-primary: #84adff;
+  --color-primary-foreground: #101827;
+  --color-primary-soft: #233b63;
 
-  --color-secondary: hsl(222 40% 15%);
-  --color-secondary-foreground: hsl(210 40% 98%);
+  --color-secondary: #293548;
+  --color-secondary-foreground: #f4f7fb;
 
-  --color-muted: hsl(222 40% 14%);
-  --color-muted-foreground: hsl(215 20% 65%);
+  --color-muted: #263244;
+  --color-muted-foreground: #aab8cc;
 
-  --color-accent: hsl(222 40% 15%);
-  --color-accent-foreground: hsl(210 40% 98%);
+  --color-accent: #263e63;
+  --color-accent-foreground: #f4f7fb;
 
   --color-destructive: hsl(0 72% 60%);
   --color-destructive-foreground: hsl(0 0% 100%);
@@ -89,9 +89,9 @@
   --color-warning: hsl(35 92% 58%);
   --color-warning-foreground: hsl(0 0% 0%);
 
-  --color-border: hsl(222 35% 19%);
-  --color-input: hsl(222 35% 19%);
-  --color-ring: hsl(243 75% 67%);
+  --color-border: #384659;
+  --color-input: #384659;
+  --color-ring: #84adff;
 }
 
 /* ----------------------------------------------------------------------------
@@ -117,7 +117,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    background-image: radial-gradient(circle at 50% -20%, hsl(252 83% 63% / 0.1), transparent 34rem);
   }
 
   /* Headings: tighter, more confident rhythm. */
@@ -177,40 +176,13 @@
 
 .saas-panel {
   border: 1px solid color-mix(in oklab, var(--color-border) 84%, transparent);
-  background: color-mix(in oklab, var(--color-card) 86%, transparent);
-  box-shadow: 0 18px 50px hsl(222 47% 11% / 0.07), 0 2px 8px hsl(222 47% 11% / 0.04);
-  backdrop-filter: blur(18px);
-}
-
-.hero-orb {
-  background: radial-gradient(circle, hsl(248 83% 63% / 0.22), hsl(190 85% 55% / 0.08) 42%, transparent 70%);
-  filter: blur(4px);
+  background: var(--color-card);
+  box-shadow: 0 12px 36px hsl(220 32% 18% / 0.06);
 }
 .dark .shadow-soft {
   box-shadow:
     0 1px 2px hsl(0 0% 0% / 0.4),
     0 8px 24px hsl(0 0% 0% / 0.45);
-}
-
-/* Soft brand glow used behind hero / primary buttons. */
-.glow-primary {
-  background: radial-gradient(
-    60% 60% at 50% 40%,
-    color-mix(in oklab, var(--color-primary) 28%, transparent),
-    transparent 70%
-  );
-}
-
-/* Gradient text accent. */
-.text-gradient {
-  background: linear-gradient(
-    100deg,
-    var(--color-primary) 0%,
-    color-mix(in oklab, var(--color-primary) 60%, hsl(280 85% 65%)) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 }
 
 /* Homepage hero grid backdrop. */
@@ -248,11 +220,6 @@
   from { opacity: 0; transform: scale(0.96); }
   to { opacity: 1; transform: scale(1); }
 }
-@keyframes jfp-glow-pulse {
-  0%, 100% { opacity: 0.55; }
-  50% { opacity: 0.9; }
-}
-
 .animate-fade-up {
   animation: jfp-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }

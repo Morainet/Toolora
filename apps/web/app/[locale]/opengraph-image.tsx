@@ -21,7 +21,7 @@ export default function OgImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "64px",
-          background: "linear-gradient(135deg, #0f1729 0%, #1e1b4b 100%)",
+          background: "#1e3a5f",
           fontFamily: "system-ui, -apple-system, sans-serif",
         }}
       >
@@ -32,45 +32,13 @@ export default function OgImage() {
               width: "64px",
               height: "64px",
               borderRadius: "16px",
-              background: "#0e0f1a",
+              background: "#175cd3",
               display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              position: "relative",
             }}
           >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "8px",
-              }}
-            >
-              <div
-                style={{
-                  width: "32px",
-                  height: "7px",
-                  borderRadius: "4px",
-                  background: "#ffffff",
-                }}
-              />
-              <div
-                style={{
-                  width: "32px",
-                  height: "7px",
-                  borderRadius: "4px",
-                  background: "#6366f1",
-                  marginLeft: "6px",
-                }}
-              />
-              <div
-                style={{
-                  width: "32px",
-                  height: "7px",
-                  borderRadius: "4px",
-                  background: "#ffffff",
-                }}
-              />
-            </div>
+            <div style={{ position: "absolute", left: "13px", top: "17px", width: "38px", height: "8px", borderRadius: "3px", background: "#ffffff" }} />
+            <div style={{ position: "absolute", left: "28px", top: "17px", width: "8px", height: "31px", borderRadius: "3px", background: "#ffffff" }} />
           </div>
           <div
             style={{
@@ -96,23 +64,24 @@ export default function OgImage() {
               fontSize: "72px",
               fontWeight: 700,
               lineHeight: 1.1,
+              display: "flex",
+              flexDirection: "column",
               color: "#ffffff",
               letterSpacing: "-0.02em",
             }}
           >
-            The fast, private way
-            <br />
-            to work with JSON
+            <span>All your tools,</span>
+            <span>one focused workspace</span>
           </div>
           <div
             style={{
               fontSize: "28px",
-              color: "#94a3b8",
+              color: "#c8dcff",
               maxWidth: "800px",
             }}
           >
-            Format, validate, minify, diff, repair & convert — all in your
-            browser. Your data never leaves your device.
+            Work with JSON, Word, Excel, and PDF in your browser. Your files
+            stay on your device.
           </div>
         </div>
 
@@ -126,7 +95,7 @@ export default function OgImage() {
                   padding: "8px 20px",
                   borderRadius: "999px",
                   background: "rgba(255,255,255,0.1)",
-                  color: "#e2e8f0",
+                  color: "#f4f7fb",
                   fontSize: "20px",
                   fontWeight: 500,
                 }}

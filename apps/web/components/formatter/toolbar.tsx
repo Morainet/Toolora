@@ -5,10 +5,10 @@ import {
   Check,
   Download,
   Trash2,
-  Sparkles,
+  AlignLeft,
   Minimize2,
   Settings2,
-  Wand2,
+  FileText,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -25,9 +25,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { IndentOption } from "@/store/json-store";
+import type { IndentOption, ToolMode } from "@/store/json-store";
+import { cn } from "@/lib/utils";
 
 interface ToolbarProps {
+  mode: ToolMode;
   /** Whether the primary action is currently running. */
   processing: boolean;
   /** Whether there's input to act on. */
@@ -54,6 +56,7 @@ interface ToolbarProps {
  * contextual but each always invokes its dedicated handler.
  */
 export function Toolbar({
+  mode,
   processing,
   hasInput,
   hasOutput,
@@ -73,28 +76,12 @@ export function Toolbar({
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 shadow-soft">
       <ToolButton
-        label={t("format")}
-        tip={t("formatTip")}
-        icon={<Sparkles className="h-4 w-4" />}
-        onClick={onFormat}
+        label={t(mode)}
+        tip={t(mode === "format" ? "formatTip" : mode === "minify" ? "minifyTip" : "validateTip")}
+        icon={mode === "format" ? <AlignLeft className="h-4 w-4" /> : mode === "minify" ? <Minimize2 className="h-4 w-4" /> : <Check className="h-4 w-4" />}
+        onClick={mode === "format" ? onFormat : mode === "minify" ? onMinify : onValidate}
         disabled={processing || !hasInput}
         variant="default"
-      />
-      <ToolButton
-        label={t("minify")}
-        tip={t("minifyTip")}
-        icon={<Minimize2 className="h-4 w-4" />}
-        onClick={onMinify}
-        disabled={processing || !hasInput}
-        variant="outline"
-      />
-      <ToolButton
-        label={t("validate")}
-        tip={t("validateTip")}
-        icon={<Check className="h-4 w-4" />}
-        onClick={onValidate}
-        disabled={processing || !hasInput}
-        variant="outline"
       />
 
       <Separator orientation="vertical" className="mx-0.5 h-6" />
@@ -126,12 +113,12 @@ export function Toolbar({
       <ToolButton
         label={t("sample")}
         tip={t("sample")}
-        icon={<Wand2 className="h-4 w-4" />}
+        icon={<FileText className="h-4 w-4" />}
         onClick={onLoadSample}
         variant="ghost"
       />
 
-      <div className="ml-auto flex items-center gap-2 pl-2">
+      {mode === "format" && <div className="ml-auto flex items-center gap-2 pl-2">
         <div className="hidden items-center gap-1.5 text-xs text-muted-foreground sm:flex">
           <Settings2 className="h-3.5 w-3.5" />
           <span>{t("indent")}</span>
@@ -149,7 +136,7 @@ export function Toolbar({
             <SelectItem value="tab">{t("indentTab")}</SelectItem>
           </SelectContent>
         </Select>
-      </div>
+      </div>}
     </div>
   );
 }
@@ -180,7 +167,7 @@ function ToolButton({
           className="gap-1.5"
         >
           {icon}
-          <span className="hidden sm:inline">{label}</span>
+          <span className={cn(variant !== "default" && "hidden sm:inline")}>{label}</span>
         </Button>
       </TooltipTrigger>
       <TooltipContent>{tip}</TooltipContent>

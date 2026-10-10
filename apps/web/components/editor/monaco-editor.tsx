@@ -51,59 +51,59 @@ function MonacoEditorInner({
     monacoRef.current = monaco;
 
     // Define custom JSON-friendly themes tuned to our brand palette.
-    // Light theme: warm off-white bg, indigo keys, vivid value colors.
+    // Editor colors follow the blue-white app palette.
     monaco.editor.defineTheme("parsy-light", {
       base: "vs",
       inherit: true,
       rules: [
-        { token: "string.key.json", foreground: "4338ca" }, // indigo keys
-        { token: "string.value.json", foreground: "047857" }, // emerald strings
-        { token: "number.json", foreground: "b45309" }, // amber numbers
-        { token: "keyword.json", foreground: "7c3aed" }, // violet true/false
+        { token: "string.key.json", foreground: "175cd3" },
+        { token: "string.value.json", foreground: "087443" },
+        { token: "number.json", foreground: "a15c10" },
+        { token: "keyword.json", foreground: "475f9a" },
         { token: "keyword.json", fontStyle: "italic" },
         { token: "string.value.json", fontStyle: "" },
       ],
       colors: {
-        "editor.background": "#fcfcfd",
-        "editor.foreground": "#1e293b",
-        "editorLineNumber.foreground": "#cbd5e1",
-        "editorLineNumber.activeForeground": "#64748b",
-        "editor.selectionBackground": "#e0e7ff",
-        "editor.inactiveSelectionBackground": "#eef2ff",
-        "editor.lineHighlightBackground": "#f8fafc",
+        "editor.background": "#ffffff",
+        "editor.foreground": "#243247",
+        "editorLineNumber.foreground": "#9aabbe",
+        "editorLineNumber.activeForeground": "#526174",
+        "editor.selectionBackground": "#d8e8ff",
+        "editor.inactiveSelectionBackground": "#ecf3ff",
+        "editor.lineHighlightBackground": "#f5f8fc",
         "editor.lineHighlightBorder": "#00000000",
-        "editorCursor.foreground": "#4f46e5",
-        "editorIndentGuide.background1": "#eef2f7",
-        "editorIndentGuide.activeBackground1": "#cbd5e1",
-        "editorBracketMatch.background": "#c7d2fe80",
-        "editorBracketMatch.border": "#818cf8",
+        "editorCursor.foreground": "#175cd3",
+        "editorIndentGuide.background1": "#e4ebf3",
+        "editorIndentGuide.activeBackground1": "#9aabbe",
+        "editorBracketMatch.background": "#d8e8ff80",
+        "editorBracketMatch.border": "#7ca8ee",
       },
     });
 
-    // Dark theme: deep slate bg, lighter indigo keys, bright value colors.
+    // Dark theme keeps syntax distinct without neon accents.
     monaco.editor.defineTheme("parsy-dark", {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "string.key.json", foreground: "a5b4fc" }, // indigo-300 keys
-        { token: "string.value.json", foreground: "6ee7b7" }, // emerald-300 strings
-        { token: "number.json", foreground: "fcd34d" }, // amber-300 numbers
-        { token: "keyword.json", foreground: "c4b5fd", fontStyle: "italic" }, // violet-300
+        { token: "string.key.json", foreground: "8db4ff" },
+        { token: "string.value.json", foreground: "91d5aa" },
+        { token: "number.json", foreground: "f0c182" },
+        { token: "keyword.json", foreground: "b5c9ee", fontStyle: "italic" },
       ],
       colors: {
-        "editor.background": "#0f1729",
-        "editor.foreground": "#e2e8f0",
-        "editorLineNumber.foreground": "#334155",
-        "editorLineNumber.activeForeground": "#94a3b8",
-        "editor.selectionBackground": "#312e81",
-        "editor.inactiveSelectionBackground": "#1e1b4b",
-        "editor.lineHighlightBackground": "#111c33",
+        "editor.background": "#202a3a",
+        "editor.foreground": "#ecf2fb",
+        "editorLineNumber.foreground": "#65778f",
+        "editorLineNumber.activeForeground": "#aab8cc",
+        "editor.selectionBackground": "#31558b",
+        "editor.inactiveSelectionBackground": "#263e63",
+        "editor.lineHighlightBackground": "#263244",
         "editor.lineHighlightBorder": "#00000000",
-        "editorCursor.foreground": "#818cf8",
-        "editorIndentGuide.background1": "#1e293b",
-        "editorIndentGuide.activeBackground1": "#475569",
-        "editorBracketMatch.background": "#4338ca60",
-        "editorBracketMatch.border": "#6366f1",
+        "editorCursor.foreground": "#84adff",
+        "editorIndentGuide.background1": "#384659",
+        "editorIndentGuide.activeBackground1": "#65778f",
+        "editorBracketMatch.background": "#31558b88",
+        "editorBracketMatch.border": "#84adff",
       },
     });
 

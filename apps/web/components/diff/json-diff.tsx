@@ -3,7 +3,7 @@
 import * as React from "react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { ArrowLeftRight, Wand2, Trash2, Columns2, Rows2 } from "lucide-react";
+import { ArrowLeftRight, FileText, Trash2, Columns2, Rows2 } from "lucide-react";
 import { DiffInput } from "@/components/diff/diff-input";
 import { useJsonWorker } from "@/hooks/use-json-worker";
 import { useJsonStore } from "@/store/json-store";
@@ -56,6 +56,7 @@ const SAMPLE_MODIFIED = `{
 interface JsonDiffProps {
   title: string;
   description: string;
+  embedded?: boolean;
 }
 
 /**
@@ -63,7 +64,7 @@ interface JsonDiffProps {
  * below showing the live differences. Validation runs in the worker so the UI
  * stays responsive on big documents.
  */
-export function JsonDiff({ title, description }: JsonDiffProps) {
+export function JsonDiff({ title, description, embedded = false }: JsonDiffProps) {
   const t = useTranslations("diff");
   const tStatus = useTranslations("tool.status");
   const { process } = useJsonWorker();
@@ -130,13 +131,13 @@ export function JsonDiff({ title, description }: JsonDiffProps) {
     hasInput && original.trim() === modified.trim() && original.trim().length > 0;
 
   return (
-    <div className="mx-auto flex min-h-[calc(100svh-4rem)] overflow-y-auto md:h-[calc(100svh-4rem)] md:overflow-hidden max-w-[1600px] flex-col px-4 py-5 sm:px-6">
+    <div className={cn("flex min-w-0 flex-col", embedded ? "min-h-[700px] p-4 sm:p-5 xl:h-[calc(100svh-16rem)] xl:min-h-[650px]" : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
       {/* Header */}
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-        <div>
+      <div className={cn("mb-4 flex flex-wrap items-end gap-3", embedded ? "justify-end" : "justify-between")}>
+        {!embedded && <div>
           <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">{title}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-        </div>
+        </div>}
 
         {/* View mode toggle + actions */}
         <div className="flex items-center gap-1.5">
@@ -173,7 +174,7 @@ export function JsonDiff({ title, description }: JsonDiffProps) {
           />
           <ActionButton
             label={t("sample")}
-            icon={<Wand2 className="h-4 w-4" />}
+            icon={<FileText className="h-4 w-4" />}
             onClick={handleSample}
           />
           <ActionButton

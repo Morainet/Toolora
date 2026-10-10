@@ -10,7 +10,7 @@ import {
   Check,
   Download,
   Trash2,
-  Wand2,
+  FileText,
   FileCode,
 } from "lucide-react";
 import { convertJSON, type TargetLanguage } from "@parsy/converter";
@@ -48,6 +48,7 @@ const MonacoEditor = dynamic(() => import("@/components/editor/monaco-editor"), 
 interface JsonConverterProps {
   title: string;
   description: string;
+  embedded?: boolean;
 }
 
 /** File extension + Monaco language per target. */
@@ -67,7 +68,7 @@ const LANG_META: Record<TargetLanguage, { ext: string; mono: string }> = {
  * Conversion runs on the main thread (the converter is fast, synchronous
  * type inference — no need for a worker).
  */
-export function JsonConverter({ title, description }: JsonConverterProps) {
+export function JsonConverter({ title, description, embedded = false }: JsonConverterProps) {
   const t = useTranslations("converter");
   const tEditor = useTranslations("editor");
   const tStatus = useTranslations("tool.status");
@@ -138,10 +139,10 @@ export function JsonConverter({ title, description }: JsonConverterProps) {
   const hasOutput = output.length > 0;
 
   return (
-    <div className="mx-auto flex min-h-[calc(100svh-4rem)] overflow-y-auto md:h-[calc(100svh-4rem)] md:overflow-hidden max-w-[1600px] flex-col px-4 py-5 sm:px-6">
+    <div className={cn("flex min-w-0 flex-col", embedded ? "min-h-[700px] p-4 sm:p-5 xl:h-[calc(100svh-16rem)] xl:min-h-[650px]" : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
       {/* Header */}
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-        <div>
+      <div className={cn("mb-4 flex flex-wrap items-end gap-3", embedded ? "justify-end" : "justify-between")}>
+        {!embedded && <div>
           <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight sm:text-2xl">
             {title}
             <kbd className="hidden shrink-0 items-center gap-0.5 rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px] font-normal text-muted-foreground sm:inline-flex">
@@ -149,7 +150,7 @@ export function JsonConverter({ title, description }: JsonConverterProps) {
             </kbd>
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-        </div>
+        </div>}
 
         {/* Language selector */}
         <div className="flex items-center gap-2">
@@ -200,7 +201,7 @@ export function JsonConverter({ title, description }: JsonConverterProps) {
         />
         <ToolButton
           label={t("sample")}
-          icon={<Wand2 className="h-4 w-4" />}
+          icon={<FileText className="h-4 w-4" />}
           onClick={handleLoadSample}
         />
         <ToolButton

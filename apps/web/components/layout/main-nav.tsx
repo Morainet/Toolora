@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { TOOLS } from "@parsy/ui";
 import { Link, usePathname } from "@/i18n/navigation";
 import { BrandMark } from "@/components/brand-mark";
+import { ToolIcon } from "@/components/tool-icon";
 import { cn } from "@/lib/utils";
 
 /**
@@ -95,7 +96,7 @@ export function MainNav({ className }: { className?: string }) {
                         : "text-muted-foreground hover:bg-accent hover:text-foreground",
                     )}
                   >
-                    <span aria-hidden>{tool.icon}</span>
+                    <ToolIcon name={tool.icon} className="h-4 w-4" />
                     {tTools(`${tool.slug}.title`)}
                   </Link>
                 );

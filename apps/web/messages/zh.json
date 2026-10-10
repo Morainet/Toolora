@@ -3,11 +3,13 @@
     "name": "Toolora",
     "workspace": "工作台",
     "home": "概览",
+    "toolsNav": "全部工具",
     "jsonTools": "JSON 工具",
     "fileTools": "文件工具",
     "collapseSidebar": "收起侧边栏",
     "expandSidebar": "展开侧边栏",
     "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
     "tagline": "快速、私密、本地优先的开发者工具台",
     "description": "一个可扩展的本地优先工具台，在浏览器中处理 JSON、Word、Excel、PDF 和更多文件。",
     "footerPrivacy": "你的数据永不离开浏览器",
@@ -47,9 +49,9 @@
       "description": "格式化、压缩、校验、树视图、对比、修复和转代码，集中在一个页面。"
     },
     "json-formatter": {
-      "title": "JSON 工具",
-      "short": "JSON 工具",
-      "description": "在一个工作区内格式化、压缩和校验 JSON。"
+      "title": "JSON 格式化",
+      "short": "格式化",
+      "description": "整理缩进和换行，让 JSON 结构更清晰、易读。"
     },
     "json-validator": {
       "title": "JSON 校验",
@@ -95,6 +97,22 @@
       "title": "PDF 文件解析",
       "short": "PDF 解析",
       "description": "在浏览器本地提取 PDF 文本，无需安装 PDF 阅读器。"
+    }
+  },
+  "jsonWorkspace": {
+    "eyebrow": "开发者工具 / JSON",
+    "toolCount": "{count} 项能力",
+    "localOnly": "仅在本地处理",
+    "modeNavigation": "JSON 功能导航",
+    "shortcut": "⌘ / Ctrl + Enter 执行",
+    "hints": {
+      "format": "整理缩进与结构",
+      "minify": "去除多余空白",
+      "validate": "定位语法问题",
+      "tree": "浏览嵌套节点",
+      "diff": "比较两份内容",
+      "repair": "修正不规范格式",
+      "converter": "生成类型定义"
     }
   },
   "home": {
@@ -205,7 +223,7 @@
       "copied": "已复制！",
       "download": "下载",
       "clear": "清空",
-      "sample": "示例",
+      "sample": "加载示例",
       "indent": "缩进",
       "indentLabel": "缩进",
       "indent2": "2 空格",

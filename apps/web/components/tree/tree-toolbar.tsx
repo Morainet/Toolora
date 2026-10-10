@@ -5,7 +5,7 @@ import {
   ChevronsUpDown,
   Search,
   Trash2,
-  Wand2,
+  FileText,
   X,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -97,7 +97,7 @@ export function TreeToolbar({
       />
       <ToolButton
         label={t("sample")}
-        icon={<Wand2 className="h-4 w-4" />}
+        icon={<FileText className="h-4 w-4" />}
         onClick={onLoadSample}
       />
       <ToolButton
