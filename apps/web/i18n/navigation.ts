@@ -7,7 +7,7 @@ import { routing } from "./routing";
  * respect the current locale.
  *
  *   import { Link, usePathname, useRouter } from "@/i18n/navigation";
- *   <Link href="/json-formatter">  // → /zh/json-formatter automatically
+ *   <Link href="/json">  // → /zh/json automatically
  *
  * Writing the path *without* a locale prefix is the intended usage — the
  * current locale is prepended automatically.

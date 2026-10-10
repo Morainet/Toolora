@@ -1,14 +1,9 @@
 import { cn } from "@/lib/utils";
 
 /**
- * BrandMark — the inline logo glyph used in the header and footer.
+ * Toolora brand mark: a compact T-shaped tool node with an orbit dot.
  *
- * Visually identical to the favicon (`app/icon.svg`): three offset rounded
- * bars (white / indigo / white) on a charcoal squircle, evoking nested JSON
- * levels. Rendered as inline SVG so it stays crisp at any size and inherits
- * nothing from the surrounding text styles.
- *
- * Use this everywhere the Parsy logo mark appears in the UI so the brand
+ * Use this everywhere the Toolora logo mark appears in the UI so the brand
  * stays consistent with the favicon.
  */
 export function BrandMark({
@@ -26,13 +21,20 @@ export function BrandMark({
       width={size}
       height={size}
       role="img"
-      aria-label="Parsy"
+      aria-label="Toolora"
       className={cn("shrink-0", className)}
     >
-      <rect width="512" height="512" rx="116" ry="116" fill="#0e0f1a" />
-      <rect x="140" y="148" width="232" height="56" rx="28" fill="#ffffff" />
-      <rect x="172" y="228" width="232" height="56" rx="28" fill="#6366f1" />
-      <rect x="140" y="308" width="232" height="56" rx="28" fill="#ffffff" />
+      <defs>
+        <linearGradient id="toolora-mark" x1="64" y1="40" x2="448" y2="472" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#7C5CFC" />
+          <stop offset="1" stopColor="#4A35C9" />
+        </linearGradient>
+      </defs>
+      <rect width="512" height="512" rx="136" fill="url(#toolora-mark)" />
+      <circle cx="366" cy="142" r="28" fill="#C9C1FF" />
+      <rect x="116" y="130" width="280" height="62" rx="31" fill="#ffffff" />
+      <rect x="225" y="130" width="62" height="250" rx="31" fill="#ffffff" />
+      <circle cx="256" cy="380" r="18" fill="#C9C1FF" />
     </svg>
   );
 }

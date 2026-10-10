@@ -7,7 +7,7 @@ import { notFound } from "next/navigation";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
-import { SiteHeader, SiteFooter } from "@/components/layout/site-header";
+import { AppShell } from "@/components/layout/app-shell";
 import { routing } from "@/i18n/routing";
 
 /** True when `value` is one of our supported locales. */
@@ -58,12 +58,12 @@ export async function generateMetadata({
     description,
     applicationName: t("name"),
     keywords: [
-      "JSON formatter",
-      "JSON 格式化",
-      "JSON validator",
-      "JSON 校验",
-      "JSON minifier",
-      "JSON beautifier",
+      "local file parser",
+      "本地文件解析",
+      "Word parser",
+      "Excel parser",
+      "PDF parser",
+      "JSON tools",
       "developer tools",
       "开发者工具",
     ],
@@ -123,11 +123,7 @@ export default async function LocaleLayout({
             disableTransitionOnChange
           >
             <TooltipProvider delayDuration={200}>
-              <div className="relative flex min-h-svh flex-col">
-                <SiteHeader />
-                <main className="flex-1">{children}</main>
-                <SiteFooter />
-              </div>
+              <AppShell>{children}</AppShell>
               <Toaster />
             </TooltipProvider>
           </ThemeProvider>

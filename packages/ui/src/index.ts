@@ -11,32 +11,25 @@
  * and the sitemap as pure route metadata.
  *
  * The `slug` is the join key used to look up localized strings, e.g.
- * `t('tools.json-formatter.title')`.
+ * `t('tools.json.title')`.
  */
 
-/** Pure route metadata for a tool. No display strings here. */
+/** @deprecated Import the registry from @parsy/toolkit in new code. */
+import { TOOLS as TOOL_DEFINITIONS } from "@parsy/toolkit";
+
+/** Compatibility view for existing web components. New code should use @parsy/toolkit. */
 export interface ToolEntry {
-  /** URL segment under the locale, e.g. "json-formatter" → /zh/json-formatter. */
   slug: string;
-  /** Path WITHOUT locale prefix (locale is prepended by the localized Link). */
   href: string;
-  /** Short emoji glyph for the nav / card. */
   icon: string;
-  /** Whether the page is live in this release. */
   available: boolean;
 }
 
-/**
- * Central tool registry. Consumed by the header nav, the homepage tool grid,
- * the sitemap, and the SEO route list. Adding a tool = one entry here + a
- * block in each message file under `tools.<slug>`.
- */
-export const TOOLS: readonly ToolEntry[] = [
-  { slug: "json-formatter", href: "/json-formatter", icon: "✨", available: true },
-  { slug: "json-validator", href: "/json-validator", icon: "✔️", available: true },
-  { slug: "json-minifier", href: "/json-minifier", icon: "🗜️", available: true },
-  { slug: "json-tree", href: "/json-tree", icon: "🌳", available: true },
-  { slug: "json-diff", href: "/json-diff", icon: "🔍", available: true },
-  { slug: "json-repair", href: "/json-repair", icon: "🛠️", available: true },
-  { slug: "json-converter", href: "/json-converter", icon: "💻", available: true },
-] as const;
+export const TOOLS: readonly ToolEntry[] = TOOL_DEFINITIONS.map((tool) => ({
+  slug: tool.slug,
+  href: tool.href,
+  icon: tool.icon,
+  available: tool.status === "available",
+}));
+
+export { AVAILABLE_TOOLS, TOOLKIT, getTool, requireTool } from "@parsy/toolkit";

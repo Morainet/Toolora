@@ -1,8 +1,15 @@
 {
   "site": {
-    "name": "Parsy",
-    "tagline": "快速、私密、本地优先的 JSON 开发者工具",
-    "description": "一个现代化、高性能、本地优先的 JSON 在线开发者工具。在浏览器中即时格式化、压缩和校验 JSON —— 你的数据永远不会上传到服务器。",
+    "name": "Toolora",
+    "workspace": "工作台",
+    "home": "概览",
+    "jsonTools": "JSON 工具",
+    "fileTools": "文件工具",
+    "collapseSidebar": "收起侧边栏",
+    "expandSidebar": "展开侧边栏",
+    "openMenu": "打开菜单",
+    "tagline": "快速、私密、本地优先的开发者工具台",
+    "description": "一个可扩展的本地优先工具台，在浏览器中处理 JSON、Word、Excel、PDF 和更多文件。",
     "footerPrivacy": "你的数据永不离开浏览器",
     "footerLicense": "MIT · Next.js 15",
     "byOrg": "由 {org} 出品",
@@ -34,10 +41,15 @@
     "dark": "深色模式"
   },
   "tools": {
+    "json": {
+      "title": "JSON 工作区",
+      "short": "JSON",
+      "description": "格式化、压缩、校验、树视图、对比、修复和转代码，集中在一个页面。"
+    },
     "json-formatter": {
-      "title": "JSON 格式化",
-      "short": "格式化",
-      "description": "即时语法高亮，美化、校验并探索 JSON。"
+      "title": "JSON 工具",
+      "short": "JSON 工具",
+      "description": "在一个工作区内格式化、压缩和校验 JSON。"
     },
     "json-validator": {
       "title": "JSON 校验",
@@ -68,37 +80,58 @@
       "title": "JSON 转代码",
       "short": "转代码",
       "description": "从 JSON 自动推断并生成 TypeScript、Go、Java、Kotlin、Swift、Rust、C#、Dart 等 8 种语言的类型定义。"
+    },
+    "word-parser": {
+      "title": "Word 文件解析",
+      "short": "Word 解析",
+      "description": "在浏览器本地提取 DOCX 文本，无需安装 Word。"
+    },
+    "excel-parser": {
+      "title": "Excel 文件解析",
+      "short": "Excel 解析",
+      "description": "在浏览器本地读取 XLSX 或 XLS 工作表，无需安装 Excel。"
+    },
+    "pdf-parser": {
+      "title": "PDF 文件解析",
+      "short": "PDF 解析",
+      "description": "在浏览器本地提取 PDF 文本，无需安装 PDF 阅读器。"
     }
   },
   "home": {
-    "badge": "本地优先 · 100% 私密",
-    "heroTitle": "快速、私密地",
-    "heroTitleAccent": "处理 JSON",
-    "heroSubtitle": "即时格式化、压缩、校验 JSON。一切都在你的浏览器中运行——数据永不上传到服务器。",
-    "ctaPrimary": "开始格式化",
-    "ctaSecondary": "校验 JSON",
+    "badge": "本地优先 · 工具持续扩展",
+    "heroTitle": "一个工作台，即刻处理",
+    "heroTitleAccent": "各种开发任务",
+    "heroSubtitle": "Toolora 把常用工具集中在一个私密、快速的工作台中。打开即用，文件只在你的浏览器里处理。",
+    "ctaPrimary": "开始使用工具",
+    "ctaSecondary": "查看全部工具",
     "trustLine": "无需注册 · 不上传 · 开源",
+    "workspaceLabel": "Toolora 工作台",
+    "localOnly": "仅本地处理",
+    "activeTools": "工具已就绪",
+    "availableTools": "个工具",
+    "uploads": "次上传",
+    "quickStart": "快速开始",
     "openTool": "打开工具",
     "comingSoon": "即将上线",
     "sections": {
-      "toolsTitle": "你需要的 JSON 工具都在这里",
-      "toolsSubtitle": "七个工具现已上线，覆盖格式化、校验、压缩、树视图、对比、修复与转代码。选一个开始吧。",
+      "toolsTitle": "你的工具工作台",
+      "toolsSubtitle": "从 JSON 处理到 Word、Excel、PDF 解析，所有工具统一入口，后续还会持续增加。",
       "whyTitle": "为什么选择",
       "howTitle": "三步上手",
       "faqTitle": "常见问题"
     },
     "how": {
       "step1": {
-        "title": "粘贴 JSON",
-        "desc": "把 JSON 粘贴到左侧编辑器，或点击“示例”加载演示数据。"
+        "title": "选择一个工具",
+        "desc": "从工具台中选择适合当前任务的工具，无需安装桌面软件。"
       },
       "step2": {
-        "title": "选择操作",
-        "desc": "格式化、校验、压缩、对比、修复或转代码——一键完成。"
+        "title": "导入或粘贴内容",
+        "desc": "上传本地文件，或把文本粘贴到编辑器中开始处理。"
       },
       "step3": {
-        "title": "复制结果",
-        "desc": "结果即时生成在右侧，复制或下载即可使用。"
+        "title": "拿走结果",
+        "desc": "解析结果即时生成，复制或下载后继续你的工作。"
       }
     },
     "faq": {
@@ -113,7 +146,7 @@
         },
         {
           "q": "需要注册或付费吗？",
-          "a": "不需要。Parsy 完全免费、开源，无需注册，无任何限制。"
+          "a": "不需要。Toolora 完全免费、开源，无需注册，无任何限制。"
         },
         {
           "q": "支持哪些语言生成？",
@@ -238,8 +271,12 @@
     "unknown": "JSON 无效。"
   },
   "metadata": {
+    "json": {
+      "title": "JSON 工作区 —— Toolora",
+      "description": "一个页面处理 JSON 格式化、压缩、校验、树视图、对比、修复和转代码。"
+    },
     "home": {
-      "title": "Parsy —— 快速、私密、本地优先的 JSON 工具",
+      "title": "Toolora —— 快速、私密、本地优先的开发者工具",
       "description": "在浏览器中即时格式化、压缩和校验 JSON。本地优先——你的数据永不离开你的设备。"
     },
     "formatter": {
@@ -269,7 +306,37 @@
     "converter": {
       "title": "JSON 转代码 —— 在线生成 TypeScript/Go/Java 类型定义",
       "description": "从 JSON 自动推断类型并生成 TypeScript、Go、Java 代码。支持嵌套对象、数组、可选字段。100% 在浏览器中。"
+    },
+    "file-parser": {
+      "wordTitle": "Word 文件解析 —— 无需安装 Word",
+      "wordDescription": "在浏览器本地提取 DOCX 文本。",
+      "excelTitle": "Excel 文件解析 —— 无需安装 Excel",
+      "excelDescription": "在浏览器本地读取 XLSX 或 XLS 工作表。",
+      "pdfTitle": "PDF 文件解析 —— 无需安装 PDF 阅读器",
+      "pdfDescription": "在浏览器本地提取 PDF 文本。"
     }
+  },
+  "fileParser": {
+    "choose": "选择文件",
+    "parsing": "解析中…",
+    "copy": "复制文本",
+    "result": "解析结果",
+    "failed": "解析失败",
+    "privacy": "文件仅在本地浏览器中处理，不会上传。",
+    "wordHint": "支持 DOCX 文件",
+    "excelHint": "支持 XLSX 和 XLS 文件",
+    "pdfHint": "支持 PDF 文件"
+    ,"addRow": "新增行",
+    "export": "导出 Excel",
+    "editableHint": "点击单元格即可修改",
+    "dropTitle": "拖入 Excel 文件开始编辑",
+    "dropHint": "文件只在当前浏览器中处理",
+    "formulaBar": "编辑当前单元格",
+    "localOnly": "仅本地处理",
+    "sheets": "个工作表",
+    "rows": "行",
+    "columns": "列",
+    "addSheet": "新增工作表"
   },
   "converter": {
     "input": "JSON 输入",

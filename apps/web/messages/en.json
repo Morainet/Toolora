@@ -1,8 +1,15 @@
 {
   "site": {
-    "name": "Parsy",
-    "tagline": "Fast, private, local-first JSON tools for developers",
-    "description": "A modern, high-performance, local-first online JSON toolkit. Format, minify, and validate JSON instantly in your browser — your data is never uploaded to a server.",
+    "name": "Toolora",
+    "workspace": "Workspace",
+    "home": "Overview",
+    "jsonTools": "JSON tools",
+    "fileTools": "File tools",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar",
+    "openMenu": "Open menu",
+    "tagline": "Fast, private, local-first developer tools",
+    "description": "An extensible local-first toolkit for JSON, Word, Excel, PDF, and more. Everything runs in your browser.",
     "footerPrivacy": "Your data never leaves your browser",
     "footerLicense": "MIT · Next.js 15",
     "byOrg": "Built by {org}",
@@ -34,10 +41,15 @@
     "dark": "Dark mode"
   },
   "tools": {
+    "json": {
+      "title": "JSON workspace",
+      "short": "JSON",
+      "description": "Format, minify, validate, inspect, compare, repair, and convert JSON on one page."
+    },
     "json-formatter": {
-      "title": "JSON Formatter",
-      "short": "Formatter",
-      "description": "Beautify, validate, and explore JSON with instant syntax highlighting."
+      "title": "JSON Toolkit",
+      "short": "JSON tools",
+      "description": "Format, minify, and validate JSON in one focused workspace."
     },
     "json-validator": {
       "title": "JSON Validator",
@@ -68,37 +80,58 @@
       "title": "JSON to Code",
       "short": "To Code",
       "description": "Infer and generate type definitions in 8 languages (TypeScript, Go, Java, Kotlin, Swift, Rust, C#, Dart) from JSON."
+    },
+    "word-parser": {
+      "title": "Word File Parser",
+      "short": "Word Parser",
+      "description": "Extract DOCX text locally in your browser without Microsoft Word."
+    },
+    "excel-parser": {
+      "title": "Excel File Parser",
+      "short": "Excel Parser",
+      "description": "Read XLSX or XLS worksheets locally in your browser without Excel."
+    },
+    "pdf-parser": {
+      "title": "PDF File Parser",
+      "short": "PDF Parser",
+      "description": "Extract PDF text locally in your browser without a PDF reader."
     }
   },
   "home": {
-    "badge": "Local-first · 100% private",
-    "heroTitle": "The fast, private way to",
-    "heroTitleAccent": "work with JSON",
-    "heroSubtitle": "Format, minify, and validate JSON instantly. Everything runs in your browser — your data is never uploaded to a server.",
-    "ctaPrimary": "Start formatting",
-    "ctaSecondary": "Validate JSON",
+    "badge": "Local-first · Always expanding",
+    "heroTitle": "One workspace for",
+    "heroTitleAccent": "everyday developer work",
+    "heroSubtitle": "Toolora brings useful tools into one private, fast workspace. Open a tool, process your files locally, and keep moving.",
+    "ctaPrimary": "Explore tools",
+    "ctaSecondary": "View all tools",
     "trustLine": "No sign-up · No upload · Open source",
+    "workspaceLabel": "Toolora workspace",
+    "localOnly": "Local only",
+    "activeTools": "Tools ready",
+    "availableTools": "tools",
+    "uploads": "uploads",
+    "quickStart": "Quick start",
     "openTool": "Open tool",
     "comingSoon": "Coming soon",
     "sections": {
-      "toolsTitle": "Everything you need for JSON",
-      "toolsSubtitle": "Seven tools live now — format, validate, minify, tree, diff, repair, and convert. Pick one to get started.",
+      "toolsTitle": "Your tool workspace",
+      "toolsSubtitle": "From JSON utilities to Word, Excel, and PDF parsing, everything has one consistent entry point — with more tools on the way.",
       "whyTitle": "Why",
       "howTitle": "Get started in 3 steps",
       "faqTitle": "Frequently asked questions"
     },
     "how": {
       "step1": {
-        "title": "Paste your JSON",
-        "desc": "Paste JSON into the left editor, or click \"Sample\" to load demo data."
+        "title": "Pick a tool",
+        "desc": "Choose the tool that fits the task without installing another desktop app."
       },
       "step2": {
-        "title": "Pick an action",
-        "desc": "Format, validate, minify, diff, repair, or convert — all in one click."
+        "title": "Import or paste",
+        "desc": "Upload a local file or paste content into the workspace to start."
       },
       "step3": {
-        "title": "Copy the result",
-        "desc": "Results appear instantly on the right. Copy or download and you're done."
+        "title": "Take the result",
+        "desc": "Results appear instantly. Copy or download them and continue your work."
       }
     },
     "faq": {
@@ -113,7 +146,7 @@
         },
         {
           "q": "Do I need to sign up or pay?",
-          "a": "No. Parsy is completely free, open source, and requires no sign-up or limits."
+          "a": "No. Toolora is completely free, open source, and requires no sign-up or limits."
         },
         {
           "q": "Which languages can I generate?",
@@ -238,8 +271,12 @@
     "unknown": "Invalid JSON."
   },
   "metadata": {
+    "json": {
+      "title": "JSON workspace — Toolora",
+      "description": "Format, minify, validate, inspect, compare, repair, and convert JSON on one page."
+    },
     "home": {
-      "title": "Parsy — Fast, private, local-first JSON tools",
+      "title": "Toolora — Fast, private, local-first developer tools",
       "description": "Format, minify, and validate JSON instantly in your browser. Local-first — your data never leaves your device."
     },
     "formatter": {
@@ -269,7 +306,37 @@
     "converter": {
       "title": "JSON to Code — Generate TypeScript/Go/Java Types Online",
       "description": "Infer types and generate TypeScript, Go, and Java code from JSON. Supports nested objects, arrays, and optional fields. 100% in your browser."
+    },
+    "file-parser": {
+      "wordTitle": "Word File Parser — No Word Required",
+      "wordDescription": "Extract DOCX text locally in your browser.",
+      "excelTitle": "Excel File Parser — No Excel Required",
+      "excelDescription": "Read XLSX or XLS worksheets locally in your browser.",
+      "pdfTitle": "PDF File Parser — No PDF Reader Required",
+      "pdfDescription": "Extract PDF text locally in your browser."
     }
+  },
+  "fileParser": {
+    "choose": "Choose file",
+    "parsing": "Parsing…",
+    "copy": "Copy text",
+    "result": "Parsed result",
+    "failed": "Could not parse the file",
+    "privacy": "The file is processed locally in your browser and never uploaded.",
+    "wordHint": "DOCX files supported",
+    "excelHint": "XLSX and XLS files supported",
+    "pdfHint": "PDF files supported"
+    ,"addRow": "Add row",
+    "export": "Export Excel",
+    "editableHint": "Click a cell to edit it",
+    "dropTitle": "Drop an Excel file to start editing",
+    "dropHint": "The file stays in this browser",
+    "formulaBar": "Edit selected cell",
+    "localOnly": "Local only",
+    "sheets": "sheets",
+    "rows": "rows",
+    "columns": "columns",
+    "addSheet": "Add sheet"
   },
   "converter": {
     "input": "JSON input",

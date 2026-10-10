@@ -5,7 +5,7 @@
  * how formatting / minifying behave.
  */
 export const SAMPLE_JSON = `{
-  "tool": "Parsy",
+  "tool": "Toolora",
   "version": "1.0.0",
   "localFirst": true,
   "description": "A modern, high-performance, local-first JSON toolkit.",

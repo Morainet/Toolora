@@ -38,7 +38,7 @@ export function SiteHeader() {
           : "border-transparent bg-transparent",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-2 px-4">
+      <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center gap-2 px-4 sm:px-6">
         <MainNav className="flex-1" />
 
         <div className="flex items-center gap-1">

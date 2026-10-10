@@ -1,13 +1,13 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Parsy — Fast, private, local-first JSON tools";
+export const alt = "Toolora — Fast, private, local-first developer tools";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 /**
  * Dynamic Open Graph image. Renders a branded social-share card with the
- * Parsy mark, name, and tagline. Used for both OpenGraph and Twitter cards
+ * Toolora mark, name, and tagline. Used for both OpenGraph and Twitter cards
  * automatically (Next.js wires it into metadata).
  */
 export default function OgImage() {
@@ -79,7 +79,7 @@ export default function OgImage() {
               fontWeight: 600,
             }}
           >
-            Parsy
+            Toolora
           </div>
         </div>
 

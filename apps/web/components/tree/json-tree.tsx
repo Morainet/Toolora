@@ -9,6 +9,7 @@ import { TreeNodeView } from "@/components/tree/tree-node";
 import { TreeEmpty } from "@/components/tree/tree-empty";
 import { useJsonWorker } from "@/hooks/use-json-worker";
 import { useTreeStore } from "@/store/tree-store";
+import { useJsonStore } from "@/store/json-store";
 import { SAMPLE_JSON } from "@/lib/sample-json";
 import {
   buildTree,
@@ -64,17 +65,16 @@ export function JsonTree({ title, description }: JsonTreeProps) {
   const localizeError = useLocalizedErrorMessage();
 
   const {
-    input,
     query,
     matches,
     defaultExpandDepth,
-    setInput,
     expandAll: expandAllPaths,
     collapseAll,
     setQuery,
     setMatches,
-    reset,
+    reset: resetTree,
   } = useTreeStore();
+  const { input, setInput, reset: resetJson } = useJsonStore();
 
   const { process } = useJsonWorker();
 
@@ -160,7 +160,8 @@ export function JsonTree({ title, description }: JsonTreeProps) {
     collapseAll();
   };
   const handleClear = () => {
-    reset();
+    resetJson();
+    resetTree();
     setTree(null);
   };
   const handleLoadSample = () => {

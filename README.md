@@ -1,27 +1,27 @@
-# Parsy
+# Toolora
 
-> A modern, high-performance, **local-first** JSON developer toolkit.
+> A local-first workspace for JSON and everyday file tools.
 
-Format, minify, and validate JSON instantly — entirely in your browser. Your
-data never leaves your device.
+Work with JSON, Word, Excel, and PDF files in your browser. Your data stays on
+your device.
 
 Built with **Next.js 15 · React 19 · TypeScript · Tailwind CSS v4 · Monaco
 Editor**, organized as a **pnpm + Turborepo monorepo**.
 
 ---
 
-## ✨ Features (Sprint 1)
+## Tools
 
-This release delivers the three core JSON tools, each on its own SEO-friendly
-route:
+The JSON workspace groups related operations on one page:
 
 | Tool | Route | What it does |
 | :--- | :--- | :--- |
-| ✨ **JSON Formatter** | `/json-formatter` | Beautify JSON with 2-space / 4-space / tab indentation |
-| ✔️ **JSON Validator** | `/json-validator` | Syntax check with precise **line & column** reporting |
-| 🗜️ **JSON Minifier** | `/json-minifier` | Compress JSON to a single line, shrink payload size |
+| **JSON workspace** | `/json` | Format, minify, validate, inspect as a tree, compare, repair, and convert JSON |
+| **Word parser** | `/word-parser` | Extract text from DOCX files |
+| **Excel editor** | `/excel-parser` | Read, edit, and export workbook data |
+| **PDF parser** | `/pdf-parser` | Extract page text from PDF files |
 
-All three share one editor component and add:
+JSON tools include:
 
 - **Monaco Editor** input + output panes with syntax highlighting
 - **Web Worker** processing — the UI stays responsive even on multi-MB JSON
@@ -32,10 +32,7 @@ All three share one editor component and add:
 - **Privacy by design** — no uploads, no telemetry; only UI preferences are
   persisted locally (never your JSON)
 
-### Planned (later sprints)
-
-JSON Tree Viewer · JSON Diff · JSON Repair · JSONPath · JSON Schema ·
-JSON → Code (Java/Kotlin/Swift/TypeScript/Go/Rust/C#/ Dart) · and more.
+Older JSON tool URLs redirect to the matching mode under `/json`.
 
 ---
 
@@ -59,10 +56,10 @@ Browser
 ### Monorepo layout
 
 ```
-parsy/
+toolora/
 ├── apps/
 │   └── web/                      # Next.js 15 application
-│       ├── app/                  # routes: /, /json-formatter, …
+│       ├── app/                  # routes: /, /json, /word-parser, …
 │       ├── components/           # ui (shadcn), layout, editor, formatter
 │       ├── hooks/                # use-json-worker, use-copy
 │       ├── workers/              # json.worker.ts
@@ -70,12 +67,40 @@ parsy/
 │       └── lib/                  # utils, sample JSON
 └── packages/
     ├── json-core/                # framework-agnostic JSON primitives ⭐
-    ├── ui/                       # shared design tokens + tool registry
-    └── converter/                # JSON→code (Sprint 4 scaffold)
+    ├── toolkit/                  # framework-agnostic tool registry + extension API ⭐
+    ├── file-parser/              # local DOCX/XLSX/XLS/PDF extraction ⭐
+    ├── ui/                       # shared UI compatibility view + design tokens
+    └── converter/                # JSON→code generation
 ```
 
 Internal packages ship **raw TypeScript** and are transpiled on the fly by
 Next.js (`transpilePackages`) — no per-package build step needed.
+
+## 🧰 Adding a tool
+
+Tool metadata lives in `packages/toolkit/src/index.ts`. Add one
+`ToolDefinition` there with a stable `id`, URL `slug`, `renderer`, category,
+status, and translation namespaces. The web navigation, homepage, and sitemap
+read the same registry, so they update automatically. Add the matching page
+renderer under `apps/web/components` and localized `tools.<slug>` messages.
+
+For app-specific integrations, use `createToolRegistry([...definitions])` to
+compose a separate registry. Duplicate ids and slugs fail immediately instead
+of producing broken routes.
+
+## 📄 Local file parsing
+
+`@parsy/file-parser` provides `parseFile(file, { kind })` for Word (`.docx`),
+Excel (`.xlsx`/`.xls`), and PDF files. The parsers run in the browser using
+the selected file's bytes only; they do not require Microsoft Office, a PDF
+reader, a backend, or an upload. The web app exposes them at:
+
+- `/word-parser` — extract DOCX text
+- `/excel-parser` — edit worksheet cells and export an XLSX file
+- `/pdf-parser` — extract text page by page
+
+These tools extract text and table data. Scanned PDFs that contain only images
+require OCR, which is intentionally not enabled by default.
 
 ---
 
@@ -115,7 +140,7 @@ powered by [`next-intl`](https://next-intl.dev/) with locale-prefixed routing.
 - **URLs**: `/zh/...` and `/en/...`. The bare root `/` 307-redirects to `/zh`.
 - **Switch language**: the globe icon in the header — it preserves the current
   path and updates the URL.
-- **SEO**: every route is prerendered for both locales; `sitemap.xml` emits one
+- **SEO**: `sitemap.xml` emits one
   entry per (locale × route) with `hreflang` alternates; `<html lang>` and all
   metadata are localized.
 
@@ -169,7 +194,7 @@ That's it — routing, sitemap, and metadata pick it up automatically.
 
 ## 📦 Project origin
 
-Based on the _Parsy_ design document (v1.0). This repository
+Based on the _Toolora_ design document (v1.0). This repository
 implements **Sprint 1** of the roadmap. Sprints 2–4 (Tree, Diff, Repair,
 JSONPath, Schema, Converter, SEO sub-pages, CI, open-source docs) are planned.
 

@@ -2,7 +2,7 @@
   "name": "parsy",
   "version": "0.1.0",
   "private": true,
-  "description": "Parsy — a modern, high-performance, local-first JSON developer toolkit.",
+  "description": "Toolora — a modern, local-first toolkit for JSON and office files.",
   "license": "MIT",
   "packageManager": "pnpm@10.7.0",
   "engines": {

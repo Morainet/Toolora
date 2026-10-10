@@ -39,18 +39,18 @@ const DEFAULT_OPTIONS: editor.IDiffEditorConstructionOptions = {
   renderOverviewRuler: false,
 };
 
-export interface ParsyDiffEditorProps {
+export interface TooloraDiffEditorProps {
   original: string;
   modified: string;
   /** Side-by-side (default) or inline diff rendering. */
   sideBySide?: boolean;
 }
 
-export default function ParsyDiffEditor({
+export default function TooloraDiffEditor({
   original,
   modified,
   sideBySide = true,
-}: ParsyDiffEditorProps) {
+}: TooloraDiffEditorProps) {
   const { resolvedTheme } = useTheme();
 
   const handleBeforeMount = (monaco: Parameters<

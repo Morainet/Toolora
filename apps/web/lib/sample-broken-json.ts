@@ -5,7 +5,7 @@
  */
 export const SAMPLE_BROKEN_JSON = `{
   // app configuration (comments are not valid JSON)
-  name: 'Parsy',
+  name: 'Toolora',
   version: '1.0.0',
   features: [
     'format',

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { ArrowLeftRight, Wand2, Trash2, Columns2, Rows2 } from "lucide-react";
 import { DiffInput } from "@/components/diff/diff-input";
 import { useJsonWorker } from "@/hooks/use-json-worker";
+import { useJsonStore } from "@/store/json-store";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -16,7 +17,7 @@ import {
 import { cn, byteLength, formatBytes } from "@/lib/utils";
 
 // Monaco DiffEditor is client-only; lazy-load the wrapper with ssr disabled.
-const ParsyDiffEditor = dynamic(() => import("./diff-editor"), {
+const TooloraDiffEditor = dynamic(() => import("./diff-editor"), {
   ssr: false,
   loading: () => (
     <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
@@ -27,7 +28,7 @@ const ParsyDiffEditor = dynamic(() => import("./diff-editor"), {
 
 /** Two sample JSON documents with intentional differences. */
 const SAMPLE_ORIGINAL = `{
-  "name": "Parsy",
+  "name": "Toolora",
   "version": "1.0.0",
   "author": "Morainet",
   "features": ["format", "minify", "validate"],
@@ -39,7 +40,7 @@ const SAMPLE_ORIGINAL = `{
 }`;
 
 const SAMPLE_MODIFIED = `{
-  "name": "Parsy",
+  "name": "Toolora",
   "version": "1.1.0",
   "author": "Morainet",
   "features": ["format", "minify", "validate", "diff", "tree"],
@@ -67,7 +68,7 @@ export function JsonDiff({ title, description }: JsonDiffProps) {
   const tStatus = useTranslations("tool.status");
   const { process } = useJsonWorker();
 
-  const [original, setOriginal] = React.useState("");
+  const [original, setOriginal] = React.useState(() => useJsonStore.getState().input);
   const [modified, setModified] = React.useState("");
   const [sideBySide, setSideBySide] = React.useState(true);
 
@@ -219,7 +220,7 @@ export function JsonDiff({ title, description }: JsonDiffProps) {
 
         <div className="h-full w-full pt-9">
           {hasInput ? (
-            <ParsyDiffEditor
+            <TooloraDiffEditor
               original={original}
               modified={modified}
               sideBySide={sideBySide}

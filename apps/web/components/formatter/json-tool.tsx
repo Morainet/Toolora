@@ -31,6 +31,7 @@ interface JsonToolProps {
   /** Localized heading shown above the editor (per-page). */
   title: string;
   description: string;
+  showModeSwitch?: boolean;
 }
 
 /**
@@ -61,7 +62,7 @@ function useLocalizedErrorMessage() {
  *   user input → worker (or main-thread fallback) → output editor
  *   + live, debounced validation → status bar + error line highlight
  */
-export function JsonTool({ initialMode, title, description }: JsonToolProps) {
+export function JsonTool({ initialMode, title, description, showModeSwitch = true }: JsonToolProps) {
   const t = useTranslations("tool");
   const tEditor = useTranslations("editor");
   const localizeError = useLocalizedErrorMessage();
@@ -261,7 +262,7 @@ export function JsonTool({ initialMode, title, description }: JsonToolProps) {
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">{description}</p>
         </div>
-        <ModeSwitch mode={mode} onChange={handleModeChange} />
+        {showModeSwitch && <ModeSwitch mode={mode} onChange={handleModeChange} />}
       </div>
 
       {/* Toolbar */}

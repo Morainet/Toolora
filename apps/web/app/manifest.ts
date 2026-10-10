@@ -2,12 +2,12 @@ import type { MetadataRoute } from "next";
 
 /**
  * Web app manifest for PWA install metadata. Lets users "Add to Home Screen"
- * with the Parsy icon, name, and theme color.
+ * with the Toolora icon, name, and theme color.
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Parsy — JSON Toolkit",
-    short_name: "Parsy",
+    name: "Toolora — Developer Toolkit",
+    short_name: "Toolora",
     description:
       "Fast, private, local-first JSON tools for developers. Format, validate, minify, diff, repair, and convert JSON.",
     start_url: "/zh",

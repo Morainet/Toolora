@@ -19,10 +19,30 @@ import createNextIntlPlugin from "next-intl/plugin";
  */
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // `next dev` and `next build` may run together in the workspace. Keep their
+  // generated server chunks separate so a build cannot break the live dev app.
+  distDir: process.env.NODE_ENV === "development" ? ".next-dev" : ".next",
+  async redirects() {
+    return [
+      ["json-formatter", "format"],
+      ["json-minifier", "minify"],
+      ["json-validator", "validate"],
+      ["json-tree", "tree"],
+      ["json-diff", "diff"],
+      ["json-repair", "repair"],
+      ["json-converter", "converter"],
+    ].map(([slug, mode]) => ({
+      source: `/:locale(zh|en)/${slug}`,
+      destination: `/:locale/json?mode=${mode}`,
+      permanent: true,
+    }));
+  },
   transpilePackages: [
     "@parsy/json-core",
     "@parsy/ui",
     "@parsy/converter",
+    "@parsy/toolkit",
+    "@parsy/file-parser",
   ],
   // These are large, client-only libraries — keep them out of the server build.
   serverExternalPackages: ["@monaco-editor/react", "monaco-editor"],
