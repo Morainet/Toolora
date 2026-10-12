@@ -13,6 +13,10 @@ describe("tool registry", () => {
     expect(TOOLKIT.get("json-diff")).toBeUndefined();
   });
 
+  it("registers the local log viewer as a standalone code tool", () => {
+    expect(TOOLKIT.get("log-viewer")).toMatchObject({ href: "/log-viewer", category: "code", renderer: "log-viewer", status: "available" });
+  });
+
   it("uses portable icon names rather than platform-dependent emoji", () => {
     for (const tool of TOOLKIT.all) {
       expect(tool.icon).toMatch(/^[a-z]+(?:-[a-z]+)*$/);

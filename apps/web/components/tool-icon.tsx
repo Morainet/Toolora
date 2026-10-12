@@ -1,4 +1,4 @@
-import { Braces, FileSearch, FileText, Table2, Wrench, type LucideIcon } from "lucide-react";
+import { Braces, FileSearch, FileText, ScrollText, Table2, Wrench, type LucideIcon } from "lucide-react";
 
 /** Resolve framework-neutral tool icon tokens to one consistent SVG set. */
 const icons: Record<string, LucideIcon> = {
@@ -6,6 +6,7 @@ const icons: Record<string, LucideIcon> = {
   "file-text": FileText,
   table: Table2,
   "file-search": FileSearch,
+  "scroll-text": ScrollText,
 };
 
 export function ToolIcon({

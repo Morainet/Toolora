@@ -11,7 +11,7 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "tagline": "Fast, private, local-first developer tools",
-    "description": "An extensible local-first toolkit for JSON, Word, Excel, PDF, and more. Everything runs in your browser.",
+    "description": "An extensible local-first toolkit for JSON, logs, Word, Excel, PDF, and more. Everything runs in your browser.",
     "footerPrivacy": "Your data never leaves your browser",
     "footerLicense": "MIT · Next.js 15",
     "byOrg": "Built by {org}",
@@ -47,6 +47,11 @@
       "title": "JSON workspace",
       "short": "JSON",
       "description": "Format, minify, validate, inspect, compare, repair, and convert JSON on one page."
+    },
+    "log-viewer": {
+      "title": "Log analyzer",
+      "short": "Log analyzer",
+      "description": "Import or paste logs, filter by level and keyword, and inspect stack traces with nearby context."
     },
     "json-formatter": {
       "title": "JSON Formatter",
@@ -115,6 +120,43 @@
       "converter": "Generate type definitions"
     }
   },
+  "logViewer": {
+    "eyebrow": "Developer tools / Logs",
+    "title": "Log analyzer",
+    "description": "Drop in a .log, .txt, or JSONL file to find errors, search keywords, and follow nearby events.",
+    "localOnly": "Processed in your browser",
+    "sourceTitle": "Log source",
+    "sourceHint": "Paste text or drop a local file",
+    "chooseFile": "Choose file",
+    "sample": "Load sample",
+    "clear": "Clear",
+    "pasteLabel": "Log text",
+    "placeholder": "Paste log text…\n2026-10-12 09:41:04 ERROR [api] Request failed",
+    "formatHint": "Supports common text logs, Android Logcat, and JSONL. Up to 8 MB; files are never uploaded.",
+    "parseButton": "Analyze logs",
+    "fileTooLarge": "This file exceeds 8 MB. Try the relevant section of the log instead.",
+    "unsupportedFile": "Choose a .log, .txt, .jsonl, .ndjson, or .json file.",
+    "readFailed": "Could not read this file. Please try again.",
+    "emptyInput": "Paste logs or choose a file first.",
+    "resultsTitle": "Results",
+    "summary": "{entries} entries · {lines} source lines",
+    "export": "Export filtered logs",
+    "searchPlaceholder": "Search messages, time, source, or request ID…",
+    "searchLabel": "Search logs",
+    "levelFilter": "Filter log levels",
+    "levels": { "ALL": "All", "ERROR": "Errors", "WARN": "Warnings", "INFO": "Info", "DEBUG": "Debug", "OTHER": "Other" },
+    "matched": "{count} matching entries",
+    "expandHint": "Select an entry for raw text and context",
+    "noMatches": "No matching logs. Try another keyword or level.",
+    "lineNumber": "Line {line}",
+    "moreLines": "lines",
+    "rawEntry": "Raw entry · lines {start}–{end}",
+    "copy": "Copy entry",
+    "copied": "Log entry copied",
+    "copyFailed": "Could not copy. Check browser permissions.",
+    "context": "Nearby entries",
+    "loadMore": "Show {count} more"
+  },
   "home": {
     "badge": "Local-first · Always expanding",
     "heroTitle": "One workspace for",
@@ -133,7 +175,7 @@
     "comingSoon": "Coming soon",
     "sections": {
       "toolsTitle": "Your tool workspace",
-      "toolsSubtitle": "From JSON utilities to Word, Excel, and PDF parsing, everything has one consistent entry point — with more tools on the way.",
+      "toolsSubtitle": "From JSON utilities and log analysis to Word, Excel, and PDF parsing, everything has one consistent entry point — with more tools on the way.",
       "whyTitle": "Why",
       "howTitle": "Get started in 3 steps",
       "faqTitle": "Frequently asked questions"
@@ -292,6 +334,10 @@
     "json": {
       "title": "JSON workspace — Toolora",
       "description": "Format, minify, validate, inspect, compare, repair, and convert JSON on one page."
+    },
+    "log-viewer": {
+      "title": "Log analyzer",
+      "description": "Parse logs locally in your browser, filter by level and keyword, and inspect multiline stacks with nearby context."
     },
     "home": {
       "title": "Toolora — Fast, private, local-first developer tools",

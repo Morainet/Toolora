@@ -11,7 +11,7 @@
     "openMenu": "打开菜单",
     "closeMenu": "关闭菜单",
     "tagline": "快速、私密、本地优先的开发者工具台",
-    "description": "一个可扩展的本地优先工具台，在浏览器中处理 JSON、Word、Excel、PDF 和更多文件。",
+    "description": "一个可扩展的本地优先工具台，在浏览器中处理 JSON、日志、Word、Excel、PDF 和更多文件。",
     "footerPrivacy": "你的数据永不离开浏览器",
     "footerLicense": "MIT · Next.js 15",
     "byOrg": "由 {org} 出品",
@@ -47,6 +47,11 @@
       "title": "JSON 工作区",
       "short": "JSON",
       "description": "格式化、压缩、校验、树视图、对比、修复和转代码，集中在一个页面。"
+    },
+    "log-viewer": {
+      "title": "日志分析",
+      "short": "日志分析",
+      "description": "导入或粘贴日志，按级别和关键词筛选，快速查看错误堆栈与相邻上下文。"
     },
     "json-formatter": {
       "title": "JSON 格式化",
@@ -115,6 +120,43 @@
       "converter": "生成类型定义"
     }
   },
+  "logViewer": {
+    "eyebrow": "开发者工具 / 日志",
+    "title": "日志分析",
+    "description": "把 .log、.txt 或 JSONL 日志拖进来，快速定位错误、搜索关键字并追踪上下文。",
+    "localOnly": "仅在浏览器本地处理",
+    "sourceTitle": "日志来源",
+    "sourceHint": "粘贴文本，或拖入本地文件",
+    "chooseFile": "选择文件",
+    "sample": "加载示例",
+    "clear": "清空",
+    "pasteLabel": "日志文本",
+    "placeholder": "粘贴日志内容…\n2026-10-12 09:41:04 ERROR [api] Request failed",
+    "formatHint": "支持常见文本日志、Android Logcat 和 JSONL；最大 8 MB，文件不会上传。",
+    "parseButton": "解析日志",
+    "fileTooLarge": "文件超过 8 MB 限制，请截取需要排查的部分。",
+    "unsupportedFile": "请选择 .log、.txt、.jsonl、.ndjson 或 .json 文件。",
+    "readFailed": "读取文件失败，请重试。",
+    "emptyInput": "请先粘贴日志或选择文件。",
+    "resultsTitle": "解析结果",
+    "summary": "{entries} 条记录 · {lines} 行原始日志",
+    "export": "导出筛选结果",
+    "searchPlaceholder": "搜索消息、时间、来源或请求 ID…",
+    "searchLabel": "搜索日志",
+    "levelFilter": "日志级别筛选",
+    "levels": { "ALL": "全部", "ERROR": "错误", "WARN": "警告", "INFO": "信息", "DEBUG": "调试", "OTHER": "其他" },
+    "matched": "匹配 {count} 条记录",
+    "expandHint": "点击记录查看原文与上下文",
+    "noMatches": "没有匹配的日志，试试调整关键词或级别。",
+    "lineNumber": "第 {line} 行",
+    "moreLines": "行",
+    "rawEntry": "原始记录 · 第 {start}–{end} 行",
+    "copy": "复制记录",
+    "copied": "已复制日志记录",
+    "copyFailed": "复制失败，请检查浏览器权限。",
+    "context": "相邻记录",
+    "loadMore": "再显示 {count} 条"
+  },
   "home": {
     "badge": "本地优先 · 工具持续扩展",
     "heroTitle": "一个工作台，即刻处理",
@@ -133,7 +175,7 @@
     "comingSoon": "即将上线",
     "sections": {
       "toolsTitle": "你的工具工作台",
-      "toolsSubtitle": "从 JSON 处理到 Word、Excel、PDF 解析，所有工具统一入口，后续还会持续增加。",
+      "toolsSubtitle": "从 JSON 处理、日志排查到 Word、Excel、PDF 解析，所有工具统一入口，后续还会持续增加。",
       "whyTitle": "为什么选择",
       "howTitle": "三步上手",
       "faqTitle": "常见问题"
@@ -292,6 +334,10 @@
     "json": {
       "title": "JSON 工作区 —— Toolora",
       "description": "一个页面处理 JSON 格式化、压缩、校验、树视图、对比、修复和转代码。"
+    },
+    "log-viewer": {
+      "title": "日志分析",
+      "description": "在浏览器本地解析日志，按级别与关键词筛选，查看多行堆栈和相邻上下文。"
     },
     "home": {
       "title": "Toolora —— 快速、私密、本地优先的开发者工具",
