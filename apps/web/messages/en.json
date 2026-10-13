@@ -99,9 +99,9 @@
       "description": "Read XLSX or XLS worksheets locally in your browser without Excel."
     },
     "pdf-parser": {
-      "title": "PDF File Parser",
-      "short": "PDF Parser",
-      "description": "Extract PDF text locally in your browser without a PDF reader."
+      "title": "PDF Reader",
+      "short": "PDF Reader",
+      "description": "Open PDFs in your browser to read, zoom, and rotate pages without installing a reader."
     }
   },
   "jsonWorkspace": {
@@ -187,7 +187,7 @@
     "comingSoon": "Coming soon",
     "sections": {
       "toolsTitle": "Your tool workspace",
-      "toolsSubtitle": "From JSON utilities and log analysis to Word, Excel, and PDF parsing, everything has one consistent entry point — with more tools on the way.",
+      "toolsSubtitle": "From JSON utilities and log analysis to Word, Excel editing, and PDF reading, everything has one consistent entry point — with more tools on the way.",
       "whyTitle": "Why",
       "howTitle": "Get started in 3 steps",
       "faqTitle": "Frequently asked questions"
@@ -390,9 +390,31 @@
       "wordDescription": "Extract DOCX text locally in your browser.",
       "excelTitle": "Excel File Parser — No Excel Required",
       "excelDescription": "Read XLSX or XLS worksheets locally in your browser.",
-      "pdfTitle": "PDF File Parser — No PDF Reader Required",
-      "pdfDescription": "Extract PDF text locally in your browser."
+      "pdfTitle": "PDF Reader — No Installation Required",
+      "pdfDescription": "Open PDFs locally in your browser with page navigation, zoom, and rotation."
     }
+  },
+  "pdfViewer": {
+    "privacy": "Opened locally in your browser; files are never uploaded",
+    "choose": "Choose PDF",
+    "opening": "Opening PDF…",
+    "dropTitle": "Open a PDF file",
+    "dropHint": "Drop a PDF here or choose one from your computer. Scanned and image-based PDFs are viewable too.",
+    "wrongType": "Please choose a PDF file.",
+    "password": "This PDF requires a password. Unlock it before opening it here.",
+    "openFailed": "Cannot open this PDF. Check that the file is complete and valid.",
+    "renderFailed": "Could not display this page. Try opening another PDF.",
+    "pageCount": "{count} pages",
+    "pageNumber": "Page number",
+    "previous": "Previous page",
+    "next": "Next page",
+    "zoomOut": "Zoom out",
+    "zoomIn": "Zoom in",
+    "fitWidth": "Fit width",
+    "rotate": "Rotate clockwise",
+    "download": "Download original file",
+    "replace": "Open another file",
+    "reader": "PDF reading area"
   },
   "fileParser": {
     "choose": "Choose file",
@@ -403,21 +425,14 @@
     "privacy": "The file is processed locally in your browser and never uploaded.",
     "wordHint": "DOCX files supported",
     "excelHint": "XLSX and XLS files supported",
-    "pdfHint": "PDF files supported"
-    ,"addRow": "Add row",
+    "addRow": "Add row",
     "export": "Export Excel",
     "editableHint": "Click a cell to edit it",
     "wordDropTitle": "Drop a Word file to extract text",
     "excelDropTitle": "Drop an Excel file to start editing",
-    "pdfDropTitle": "Drop a PDF file to extract text",
     "wrongType": "Wrong file type for this tool. {format}.",
-    "passwordRequired": "This PDF requires a password. Unlock it before selecting it again.",
-    "invalidPdf": "Cannot read this PDF. It may be damaged or not a valid PDF file.",
     "failedHint": "Could not parse the file. Check that it is complete and in the correct format, then retry.",
     "replaceFile": "Open another file",
-    "pageCount": "{count} pages",
-    "noPdfText": "No extractable text found. This PDF may contain scans, images, or blank pages. Only text layers are supported; OCR is not available yet.",
-    "partialPdfText": "No extractable text on pages {pages}; they may contain images or be blank. Other pages were extracted. OCR is not available yet.",
     "dropHint": "The file stays in this browser",
     "formulaBar": "Edit selected cell",
     "localOnly": "Local only",

@@ -1,4 +1,7 @@
-/** Local, browser-only file extraction. No Office, PDF reader, or server is required. */
+/** Local, browser-only file extraction and PDF viewing. No Office app or server is required. */
+
+import type { PDFDocumentProxy } from "pdfjs-dist";
+export type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 
 export type SupportedFileKind = "word" | "excel" | "pdf";
 
@@ -74,6 +77,28 @@ async function parseExcel(file: File): Promise<Pick<ParsedFile, "text" | "sheets
   return { text: sheetsToText(sheets), sheets };
 }
 
+/** Open a PDF for page rendering without extracting its text or uploading it. */
+export async function openPdf(file: File, options: Pick<ParseFileOptions, "pdfAssetBaseUrl"> = {}): Promise<{ document: PDFDocumentProxy; destroy: () => Promise<void> }> {
+  if (detectKind(file) !== "pdf") throw new FileTypeError();
+  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  const assets = (options.pdfAssetBaseUrl ?? `/pdfjs/${pdfjs.version}/`).replace(/\/?$/, "/");
+  pdfjs.GlobalWorkerOptions.workerSrc = `${assets}pdf.worker.min.mjs`;
+  const task = pdfjs.getDocument({
+    data: new Uint8Array(await file.arrayBuffer()),
+    cMapUrl: `${assets}cmaps/`,
+    cMapPacked: true,
+    standardFontDataUrl: `${assets}standard_fonts/`,
+    wasmUrl: `${assets}wasm/`,
+  });
+  try {
+    const document = await task.promise;
+    return { document, destroy: () => task.destroy() };
+  } catch (error) {
+    await task.destroy();
+    throw error;
+  }
+}
+
 /** Export the edited sheet model without needing Excel installed. */
 export async function exportExcel(sheets: ParsedSheet[], filename = "toolora-edited.xlsx"): Promise<void> {
   const XLSX = await import("xlsx");
@@ -93,18 +118,8 @@ export async function exportExcel(sheets: ParsedSheet[], filename = "toolora-edi
 }
 
 async function parsePdf(file: File, options: ParseFileOptions): Promise<Pick<ParsedFile, "text" | "sheets" | "pageCount" | "emptyTextPages">> {
-  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
-  const assets = (options.pdfAssetBaseUrl ?? `/pdfjs/${pdfjs.version}/`).replace(/\/?$/, "/");
-  pdfjs.GlobalWorkerOptions.workerSrc = `${assets}pdf.worker.min.mjs`;
-  const task = pdfjs.getDocument({
-    data: new Uint8Array(await file.arrayBuffer()),
-    cMapUrl: `${assets}cmaps/`,
-    cMapPacked: true,
-    standardFontDataUrl: `${assets}standard_fonts/`,
-    wasmUrl: `${assets}wasm/`,
-  });
+  const { document: pdf, destroy } = await openPdf(file, options);
   try {
-    const pdf = await task.promise;
     const pages: string[] = [];
     const emptyTextPages: number[] = [];
     for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
@@ -126,7 +141,7 @@ async function parsePdf(file: File, options: ParseFileOptions): Promise<Pick<Par
     };
   } finally {
     // Release the document and worker on success and on corrupt/encrypted files.
-    await task.destroy();
+    await destroy();
   }
 }
 

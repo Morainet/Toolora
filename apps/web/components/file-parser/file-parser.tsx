@@ -6,10 +6,11 @@ import { exportExcel, FileTypeError, parseFile, sheetsToText, type ParsedFile, t
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 
-const ACCEPT: Record<SupportedFileKind, string> = {
+type EditableFileKind = Exclude<SupportedFileKind, "pdf">;
+
+const ACCEPT: Record<EditableFileKind, string> = {
   word: ".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   excel: ".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel",
-  pdf: ".pdf,application/pdf",
 };
 
 function updateSheet(file: ParsedFile, sheetIndex: number, update: (sheet: ParsedSheet) => ParsedSheet): ParsedFile {
@@ -102,7 +103,7 @@ function ExcelGrid({ file, setFile }: { file: ParsedFile; setFile: (file: Parsed
   );
 }
 
-export function FileParser({ kind, title, description }: { kind: SupportedFileKind; title: string; description: string }) {
+export function FileParser({ kind, title, description }: { kind: EditableFileKind; title: string; description: string }) {
   const t = useTranslations("fileParser");
   const inputRef = useRef<HTMLInputElement>(null);
   const parsingRef = useRef(false);
@@ -118,8 +119,6 @@ export function FileParser({ kind, title, description }: { kind: SupportedFileKi
     try { setFile(await parseFile(selected, { kind })); setFileVersion(version => version + 1); }
     catch (cause) {
       if (cause instanceof FileTypeError) setError(t("wrongType", { format: t(`${kind}Hint`) }));
-      else if (cause instanceof Error && cause.name === "PasswordException") setError(t("passwordRequired"));
-      else if (cause instanceof Error && cause.name === "InvalidPDFException") setError(t("invalidPdf"));
       else setError(t("failedHint"));
     }
     finally { parsingRef.current = false; setBusy(false); }
@@ -135,8 +134,7 @@ export function FileParser({ kind, title, description }: { kind: SupportedFileKi
       }} />
       {!file && <section aria-busy={busy} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); void onChange(event.dataTransfer.files[0]); }} className="flex min-h-[calc(100svh-14rem)] flex-col items-center justify-center rounded-2xl border border-dashed border-primary/35 bg-primary/[0.035] p-8 text-center transition-colors hover:bg-primary/[0.06]"><div className="mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-primary/10 text-primary"><Upload className="h-7 w-7" /></div><h2 className="text-xl font-semibold">{busy ? t("parsing") : t(`${kind}DropTitle`)}</h2><p className="mt-2 max-w-md text-sm text-muted-foreground">{t(`${kind}Hint`)} · {t("dropHint")}</p><Button className="mt-6 rounded-xl px-5" onClick={() => inputRef.current?.click()} disabled={busy}>{busy ? t("parsing") : t("choose")}</Button></section>}
       {error && <p role="alert" className="rounded-xl border border-destructive/50 p-4 text-sm text-destructive">{error}</p>}
-      {file && <div className="flex items-center justify-between gap-3"><p className="text-sm text-muted-foreground">{file.pageCount != null ? t("pageCount", { count: file.pageCount }) : t(`${kind}Hint`)}</p><Button variant="outline" disabled={busy} onClick={() => inputRef.current?.click()}>{busy ? t("parsing") : t("replaceFile")}</Button></div>}
-      {!!file?.emptyTextPages?.length && <p role="status" className="rounded-xl border border-border bg-muted/40 p-4 text-sm text-muted-foreground">{file.emptyTextPages.length === file.pageCount ? t("noPdfText") : t("partialPdfText", { pages: file.emptyTextPages.join(", ") })}</p>}
+      {file && <div className="flex items-center justify-between gap-3"><p className="text-sm text-muted-foreground">{t(`${kind}Hint`)}</p><Button variant="outline" disabled={busy} onClick={() => inputRef.current?.click()}>{busy ? t("parsing") : t("replaceFile")}</Button></div>}
       {file && kind === "excel" && <ExcelGrid key={fileVersion} file={file} setFile={setFile} />}
       {file && kind !== "excel" && <section className="flex min-w-0 flex-1 flex-col rounded-2xl border border-border/80 bg-card p-4 shadow-soft"><div className="mb-3 flex items-center justify-between gap-4"><h2 className="min-w-0 truncate text-base font-medium">{file.name}</h2><Button variant="outline" disabled={!file.text} onClick={() => void navigator.clipboard.writeText(file.text)}>{t("copy")}</Button></div><textarea readOnly value={file.text} aria-label={t("result")} className="h-[calc(100svh-15rem)] min-h-[480px] w-full flex-1 resize-y rounded-xl border bg-muted/20 p-4 font-mono text-sm outline-none" /></section>}
     </main>

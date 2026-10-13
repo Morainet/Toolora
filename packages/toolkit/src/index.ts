@@ -80,7 +80,7 @@ const definitions = [
   { id: "log-viewer", slug: "log-viewer", href: "/log-viewer", icon: "scroll-text", category: "code", status: "available", renderer: "log-viewer", messages: { tool: "tools.log-viewer", metadata: "metadata.log-viewer" } },
   { id: "word-parser", slug: "word-parser", href: "/word-parser", icon: "file-text", category: "utility", status: "available", renderer: "file-parser", messages: { tool: "tools.word-parser", metadata: "metadata.file-parser" } },
   { id: "excel-parser", slug: "excel-parser", href: "/excel-parser", icon: "table", category: "utility", status: "available", renderer: "file-parser", messages: { tool: "tools.excel-parser", metadata: "metadata.file-parser" } },
-  { id: "pdf-parser", slug: "pdf-parser", href: "/pdf-parser", icon: "file-search", category: "utility", status: "available", renderer: "file-parser", messages: { tool: "tools.pdf-parser", metadata: "metadata.file-parser" } },
+  { id: "pdf-parser", slug: "pdf-parser", href: "/pdf-parser", icon: "book-open", category: "utility", status: "available", renderer: "pdf-viewer", messages: { tool: "tools.pdf-parser", metadata: "metadata.file-parser" } },
 ] as const satisfies readonly ToolDefinition[];
 
 /** Default registry used by Toolora's web app. */

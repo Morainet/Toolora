@@ -19,7 +19,7 @@ The JSON workspace groups related operations on one page:
 | **JSON workspace** | `/json` | Format, minify, validate, inspect as a tree, compare, repair, and convert JSON |
 | **Word parser** | `/word-parser` | Extract text from DOCX files |
 | **Excel editor** | `/excel-parser` | Read, edit, and export workbook data |
-| **PDF parser** | `/pdf-parser` | Extract page text from PDF files |
+| **PDF reader** | `/pdf-parser` | Open and read PDF pages, including scanned documents |
 
 JSON tools include:
 
@@ -68,7 +68,7 @@ toolora/
 └── packages/
     ├── json-core/                # framework-agnostic JSON primitives ⭐
     ├── toolkit/                  # framework-agnostic tool registry + extension API ⭐
-    ├── file-parser/              # local DOCX/XLSX/XLS/PDF extraction ⭐
+    ├── file-parser/              # local DOCX/XLSX/XLS extraction + PDF.js viewer API ⭐
     ├── ui/                       # shared UI compatibility view + design tokens
     └── converter/                # JSON→code generation
 ```
@@ -88,21 +88,21 @@ For app-specific integrations, use `createToolRegistry([...definitions])` to
 compose a separate registry. Duplicate ids and slugs fail immediately instead
 of producing broken routes.
 
-## 📄 Local file parsing
+## 📄 Local file tools
 
-`@parsy/file-parser` provides `parseFile(file, { kind })` for Word (`.docx`),
-Excel (`.xlsx`/`.xls`), and PDF files. The parsers run in the browser using
-the selected file's bytes only; they do not require Microsoft Office, a PDF
-reader, a backend, or an upload. The web app exposes them at:
+`@parsy/file-parser` provides browser-side Word (`.docx`) and Excel
+(`.xlsx`/`.xls`) parsing, plus `openPdf(file)` for PDF page rendering. The
+selected file stays in the browser; no Microsoft Office, PDF reader, backend,
+or upload is required. The web app exposes them at:
 
 - `/word-parser` — extract DOCX text
 - `/excel-parser` — edit worksheet cells and export an XLSX file
-- `/pdf-parser` — extract text page by page
+- `/pdf-parser` — view PDF pages, navigate, zoom, rotate, and download the original
 
-These tools extract text and table data. PDFs retain page boundaries and text
-line breaks. Pages without extractable text are reported explicitly; scanned
-images require OCR, which is not currently supported. Password-protected PDFs
-must be unlocked before opening them here.
+The PDF reader renders page graphics, including scanned or image-only PDFs; it
+does not need a text layer. Password-protected PDFs must be unlocked before
+opening them here. The package still offers `parseFile(file, { kind: "pdf" })`
+for consumers that explicitly need text extraction.
 
 PDF.js runs in a local worker. The web app prepares matching worker, CMap,
 standard-font and WASM assets at `public/pdfjs/<version>/` during dev/build.

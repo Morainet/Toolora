@@ -99,9 +99,9 @@
       "description": "在浏览器本地读取 XLSX 或 XLS 工作表，无需安装 Excel。"
     },
     "pdf-parser": {
-      "title": "PDF 文件解析",
-      "short": "PDF 解析",
-      "description": "在浏览器本地提取 PDF 文本，无需安装 PDF 阅读器。"
+      "title": "PDF 阅读器",
+      "short": "PDF 阅读",
+      "description": "在浏览器中直接打开 PDF，逐页查看、缩放和旋转；无需安装阅读器。"
     }
   },
   "jsonWorkspace": {
@@ -187,7 +187,7 @@
     "comingSoon": "即将上线",
     "sections": {
       "toolsTitle": "你的工具工作台",
-      "toolsSubtitle": "从 JSON 处理、日志排查到 Word、Excel、PDF 解析，所有工具统一入口，后续还会持续增加。",
+      "toolsSubtitle": "从 JSON 处理、日志排查到 Word、Excel 编辑和 PDF 阅读，所有工具统一入口，后续还会持续增加。",
       "whyTitle": "为什么选择",
       "howTitle": "三步上手",
       "faqTitle": "常见问题"
@@ -390,9 +390,31 @@
       "wordDescription": "在浏览器本地提取 DOCX 文本。",
       "excelTitle": "Excel 文件解析 —— 无需安装 Excel",
       "excelDescription": "在浏览器本地读取 XLSX 或 XLS 工作表。",
-      "pdfTitle": "PDF 文件解析 —— 无需安装 PDF 阅读器",
-      "pdfDescription": "在浏览器本地提取 PDF 文本。"
+      "pdfTitle": "PDF 阅读器 —— 无需安装软件",
+      "pdfDescription": "在浏览器本地打开 PDF，支持逐页阅读、缩放和旋转。"
     }
+  },
+  "pdfViewer": {
+    "privacy": "仅在本地浏览器中打开，不会上传文件",
+    "choose": "选择 PDF",
+    "opening": "正在打开 PDF…",
+    "dropTitle": "打开 PDF 文件",
+    "dropHint": "拖入 PDF 文件，或从电脑选择；扫描版和图片版也可查看。",
+    "wrongType": "请选择 PDF 文件。",
+    "password": "此 PDF 需要密码，请先解锁后再打开。",
+    "openFailed": "无法打开此 PDF，请确认文件完整且格式正确。",
+    "renderFailed": "页面显示失败，请尝试打开其他 PDF。",
+    "pageCount": "共 {count} 页",
+    "pageNumber": "页码",
+    "previous": "上一页",
+    "next": "下一页",
+    "zoomOut": "缩小",
+    "zoomIn": "放大",
+    "fitWidth": "适应宽度",
+    "rotate": "顺时针旋转",
+    "download": "下载原文件",
+    "replace": "打开其他文件",
+    "reader": "PDF 阅读区域"
   },
   "fileParser": {
     "choose": "选择文件",
@@ -403,21 +425,14 @@
     "privacy": "文件仅在本地浏览器中处理，不会上传。",
     "wordHint": "支持 DOCX 文件",
     "excelHint": "支持 XLSX 和 XLS 文件",
-    "pdfHint": "支持 PDF 文件"
-    ,"addRow": "新增行",
+    "addRow": "新增行",
     "export": "导出 Excel",
     "editableHint": "点击单元格即可修改",
     "wordDropTitle": "拖入 Word 文件提取文本",
     "excelDropTitle": "拖入 Excel 文件开始编辑",
-    "pdfDropTitle": "拖入 PDF 文件提取文本",
     "wrongType": "文件类型不符，当前工具{format}。",
-    "passwordRequired": "此 PDF 需要密码，请先解锁后再选择文件。",
-    "invalidPdf": "无法读取此 PDF，文件可能已损坏或并非有效的 PDF 文件。",
     "failedHint": "解析失败，请确认文件完整且格式正确，然后重试。",
     "replaceFile": "打开其他文件",
-    "pageCount": "共 {count} 页",
-    "noPdfText": "未发现可提取的文字。此 PDF 可能是扫描件、图片或空白页；当前仅提取文本层，暂不支持 OCR 文字识别。",
-    "partialPdfText": "第 {pages} 页未发现可提取的文字，可能是图片或空白页；其余页面已提取。当前暂不支持 OCR 文字识别。",
     "dropHint": "文件只在当前浏览器中处理",
     "formulaBar": "编辑当前单元格",
     "localOnly": "仅本地处理",

@@ -49,7 +49,8 @@ pnpm typecheck
 pnpm --filter @parsy/web build
 ```
 
-Browser regression should cover multi-page PDF text and error recovery, DOCX
+Browser regression should cover multi-page PDF rendering (including scanned
+pages), navigation, zoom, and error recovery; DOCX
 text, XLS/XLSX import-edit-export, JSON formatting, language switching, and an
 image optimization request. GitHub Dependabot's repository-level status is
 separate from local audit output and only refreshes after changes are pushed

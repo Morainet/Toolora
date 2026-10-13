@@ -1,11 +1,11 @@
-import { Braces, FileSearch, FileText, ScrollText, Table2, Wrench, type LucideIcon } from "lucide-react";
+import { BookOpen, Braces, FileText, ScrollText, Table2, Wrench, type LucideIcon } from "lucide-react";
 
 /** Resolve framework-neutral tool icon tokens to one consistent SVG set. */
 const icons: Record<string, LucideIcon> = {
   braces: Braces,
   "file-text": FileText,
   table: Table2,
-  "file-search": FileSearch,
+  "book-open": BookOpen,
   "scroll-text": ScrollText,
 };
 

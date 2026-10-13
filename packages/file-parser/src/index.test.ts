@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { FileTypeError, parseFile } from "./index";
+import { FileTypeError, openPdf, parseFile } from "./index";
 
 const pdfjs = vi.hoisted(() => ({
   version: "6.4.299",
@@ -23,6 +23,29 @@ function mockDocument(pages: Array<Array<{ str: string; hasEOL: boolean } | { ty
 beforeEach(() => { vi.clearAllMocks(); pdfjs.GlobalWorkerOptions.workerSrc = ""; });
 
 describe("PDF parsing", () => {
+  it("opens a PDF for rendering without asking for any text", async () => {
+    const { task, document, pageObjects } = mockDocument([[]]);
+    const opened = await openPdf(pdfFile());
+    expect(opened.document).toBe(document);
+    expect(pageObjects[0].getTextContent).not.toHaveBeenCalled();
+    expect(task.destroy).not.toHaveBeenCalled();
+    await opened.destroy();
+    expect(task.destroy).toHaveBeenCalledOnce();
+  });
+
+  it("rejects non-PDF files before opening the renderer", async () => {
+    await expect(openPdf(new File(["x"], "wrong.xlsx"))).rejects.toBeInstanceOf(FileTypeError);
+    expect(pdfjs.getDocument).not.toHaveBeenCalled();
+  });
+
+  it("releases a failed PDF open", async () => {
+    const failure = new Error("corrupt");
+    const task = { promise: Promise.reject(failure), destroy: vi.fn().mockResolvedValue(undefined) };
+    pdfjs.getDocument.mockReturnValue(task);
+    await expect(openPdf(pdfFile())).rejects.toBe(failure);
+    expect(task.destroy).toHaveBeenCalledOnce();
+  });
+
   it("configures a matching local worker and supporting assets", async () => {
     const { task } = mockDocument([[{ str: "Hello", hasEOL: false }]]);
     await parseFile(pdfFile());
