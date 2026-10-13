@@ -40,3 +40,9 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Generated from the installed monaco-editor package during dev/build.
+apps/web/public/monaco/
+
+# Generated from the installed pdfjs-dist package during dev/build.
+apps/web/public/pdfjs/

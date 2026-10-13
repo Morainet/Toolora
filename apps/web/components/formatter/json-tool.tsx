@@ -13,6 +13,7 @@ import { useCopy } from "@/hooks/use-copy";
 import { useHotkey } from "@/hooks/use-hotkey";
 import { useJsonStore, type ToolMode } from "@/store/json-store";
 import { SAMPLE_JSON } from "@/lib/sample-json";
+import { embeddedWorkspaceClass, focusedWorkspaceClass } from "@/lib/workspace-layout";
 import { cn, byteLength, formatBytes } from "@/lib/utils";
 
 // Monaco is client-only; load it lazily.
@@ -33,6 +34,7 @@ interface JsonToolProps {
   description: string;
   showModeSwitch?: boolean;
   embedded?: boolean;
+  focused?: boolean;
 }
 
 /**
@@ -63,7 +65,7 @@ function useLocalizedErrorMessage() {
  *   user input → worker (or main-thread fallback) → output editor
  *   + live, debounced validation → status bar + error line highlight
  */
-export function JsonTool({ initialMode, title, description, showModeSwitch = true, embedded = false }: JsonToolProps) {
+export function JsonTool({ initialMode, title, description, showModeSwitch = true, embedded = false, focused = false }: JsonToolProps) {
   const t = useTranslations("tool");
   const tEditor = useTranslations("editor");
   const localizeError = useLocalizedErrorMessage();
@@ -81,8 +83,19 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
     reset,
   } = useJsonStore();
 
-  const [mode, setMode] = React.useState<ToolMode>(initialMode);
-  React.useEffect(() => setMode(initialMode), [initialMode]);
+  const [localMode, setLocalMode] = React.useState<ToolMode>(initialMode);
+  // The workspace controls its mode directly; changing it must not remount
+  // Monaco or lose the input's cursor, scroll position and undo history.
+  const mode = showModeSwitch ? localMode : initialMode;
+  const activeMode = React.useRef<ToolMode | null>(mode);
+  React.useEffect(() => {
+    activeMode.current = mode;
+    return () => { activeMode.current = null; };
+  }, [mode]);
+  const [outputMounted, setOutputMounted] = React.useState(false);
+  React.useEffect(() => {
+    if (output) setOutputMounted(true);
+  }, [output]);
 
   const { process } = useJsonWorker();
   const { copied, copy } = useCopy();
@@ -99,6 +112,7 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
       if (!silent) setStatus({ state: "processing" });
 
       const result = await process("validate", { json: text });
+      if (!activeMode.current || useJsonStore.getState().input !== text) return;
       if (result.valid) {
         setStatus({ state: "valid", error: null });
       } else {
@@ -118,7 +132,7 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
     return () => {
       if (validateTimer.current) clearTimeout(validateTimer.current);
     };
-  }, [input, runValidation]);
+  }, [input, mode, runValidation]);
 
   // ---- primary actions -----------------------------------------------
   const handleFormat = React.useCallback(async () => {
@@ -126,6 +140,7 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
     setStatus({ state: "processing" });
     const start = performance.now();
     const result = await process("format", { json: input, indent });
+    if (activeMode.current !== "format" || useJsonStore.getState().input !== input) return;
     const durationMs = performance.now() - start;
 
     if (result.ok) {
@@ -146,6 +161,7 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
     setStatus({ state: "processing" });
     const start = performance.now();
     const result = await process("minify", { json: input });
+    if (activeMode.current !== "minify" || useJsonStore.getState().input !== input) return;
     const durationMs = performance.now() - start;
 
     if (result.ok) {
@@ -173,6 +189,7 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
     setStatus({ state: "processing" });
     const start = performance.now();
     const result = await process("validate", { json: input });
+    if (activeMode.current !== "validate" || useJsonStore.getState().input !== input) return;
     const durationMs = performance.now() - start;
 
     if (result.valid) {
@@ -231,7 +248,7 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
   }, [setInput, setOutput, setStatus]);
 
   const handleModeChange = React.useCallback((next: ToolMode) => {
-    setMode(next);
+    setLocalMode(next);
   }, []);
 
   // Keyboard shortcut: Cmd/Ctrl+Enter runs the primary action.
@@ -243,7 +260,7 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
     status.state === "invalid" && status.error ? status.error.line : null;
 
   return (
-    <div className={cn("flex min-w-0 flex-col", embedded ? "min-h-[700px] p-4 sm:p-5 xl:h-[calc(100svh-16rem)] xl:min-h-[650px]" : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
+    <div className={cn("flex min-w-0 flex-col", embedded ? focused ? focusedWorkspaceClass : embeddedWorkspaceClass : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
       {/* Header */}
       {!embedded && <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
@@ -277,7 +294,7 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
       />
 
       {/* Editors */}
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 py-4 md:grid-cols-[1fr_auto_1fr]">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 py-3 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
         <Pane
           label={t("panes.input")}
           badge={input ? "input" : undefined}
@@ -309,7 +326,7 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
           badge={hasOutput ? "output" : undefined}
           className="min-h-[260px]"
         >
-          {hasOutput ? (
+          {(hasOutput || outputMounted) && <div className={cn("h-full", !hasOutput && "hidden")} aria-hidden={!hasOutput}>
             <MonacoEditor
               value={output}
               readOnly
@@ -317,7 +334,8 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
               loadingLabel={tEditor("loading")}
               ariaLabel={tEditor("outputAria")}
             />
-          ) : (
+          </div>}
+          {!hasOutput && (
             <EmptyOutput
               mode={mode}
               errorLine={errorLine}
@@ -463,7 +481,7 @@ function EmptyOutput({
         <FileText className="h-7 w-7" />
       </div>
       <p className="font-medium">{t("outputHere")}</p>
-      <p className="max-w-xs text-xs">{t("outputHint")}</p>
+      <p className="max-w-xs text-xs">{mode === "format" ? t("formatHint") : mode === "minify" ? t("minifyHint") : t("validateHint")}</p>
     </div>
   );
 }

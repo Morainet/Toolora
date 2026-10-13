@@ -23,6 +23,20 @@ describe("parseLog", () => {
     expect(filterLogEntries([entry], "WARN", "abc")).toHaveLength(1);
   });
 
+  it("parses a formatted JSON array and preserves source line ranges", () => {
+    const entries = parseLog('[\n  {"level":"info","service":"api","message":"ready"},\n  {\n    "level":"error",\n    "service":"db",\n    "message":"failed"\n  }\n]');
+    expect(entries).toMatchObject([
+      { startLine: 2, endLine: 2, level: "INFO", source: "api", message: "ready" },
+      { startLine: 3, endLine: 7, level: "ERROR", source: "db", message: "failed" },
+    ]);
+  });
+
+  it("parses a formatted JSON object as one log record", () => {
+    expect(parseLog('{\n  "level": "error",\n  "message": "timeout"\n}')).toMatchObject([
+      { startLine: 1, endLine: 4, level: "ERROR", message: "timeout" },
+    ]);
+  });
+
   it("recognizes Android logcat entries and keeps unknown lines", () => {
     const entries = parseLog("10-12 10:20:30.123 1234 5678 E Network: failed\nplain text line");
     expect(entries[0]).toMatchObject({ level: "ERROR", source: "Network", message: "failed" });
@@ -46,5 +60,6 @@ describe("log filtering", () => {
     expect(filterLogEntries(entries, "ERROR", "down")).toHaveLength(1);
     expect(filterLogEntries(entries, "INFO", "down")).toHaveLength(0);
     expect(filterLogEntries(entries, "ALL", "database")).toHaveLength(2);
+    expect(filterLogEntries(parseLog("INFO [api] ready\nERROR [db] failed"), "ALL", "", "db")).toMatchObject([{ source: "db", level: "ERROR" }]);
   });
 });

@@ -115,10 +115,56 @@ function looksLikeEntryStart(line: string): boolean {
     parseLevel(trimmed) !== null;
 }
 
+/** Keep the original line range when a .json file contains an array of log records. */
+function parseJsonArray(text: string): LogEntry[] | null {
+  if (!text.trimStart().startsWith("[")) return null;
+  try {
+    const value: unknown = JSON.parse(text);
+    if (!Array.isArray(value) || !value.every((item) => item && typeof item === "object" && !Array.isArray(item))) return null;
+  } catch {
+    return null;
+  }
+
+  const entries: LogEntry[] = [];
+  let depth = 0;
+  let line = 1;
+  let start = -1;
+  let startLine = 1;
+  let quoted = false;
+  let escaped = false;
+  for (let index = 0; index < text.length; index++) {
+    const char = text[index];
+    if (quoted) {
+      if (escaped) escaped = false;
+      else if (char === "\\") escaped = true;
+      else if (char === '"') quoted = false;
+    } else if (char === '"') quoted = true;
+    else if (char === "{" || char === "[") {
+      if (char === "{" && depth === 1) { start = index; startLine = line; }
+      depth++;
+    } else if (char === "}" || char === "]") {
+      depth--;
+      if (char === "}" && depth === 1 && start !== -1) {
+        const raw = text.slice(start, index + 1);
+        const parsed = parseJsonLine(raw) ?? parsePlainLine(raw);
+        entries.push({ id: entries.length, startLine, endLine: line, raw, ...parsed });
+        start = -1;
+      }
+    }
+    if (char === "\n") line++;
+  }
+  return entries;
+}
+
 /** Parse common plain-text and JSONL logs while keeping stack traces attached. */
 export function parseLog(text: string): LogEntry[] {
   if (!text.trim()) return [];
-  const lines = text.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").split("\n");
+  const normalized = text.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
+  const jsonArray = parseJsonArray(normalized);
+  if (jsonArray) return jsonArray;
+  const jsonObject = parseJsonLine(normalized);
+  if (jsonObject) return [{ id: 0, startLine: 1, endLine: normalized.trimEnd().split("\n").length, raw: normalized.trimEnd(), ...jsonObject }];
+  const lines = normalized.split("\n");
   if (lines.at(-1) === "") lines.pop();
   const entries: LogEntry[] = [];
 
@@ -144,10 +190,11 @@ export function levelGroup(level: LogLevel): Exclude<LogFilterLevel, "ALL"> {
   return "OTHER";
 }
 
-export function filterLogEntries(entries: readonly LogEntry[], level: LogFilterLevel, query: string): LogEntry[] {
+export function filterLogEntries(entries: readonly LogEntry[], level: LogFilterLevel, query: string, source?: string): LogEntry[] {
   const needle = query.trim().toLocaleLowerCase();
   return entries.filter((entry) =>
     (level === "ALL" || levelGroup(entry.level) === level) &&
+    (!source || entry.source === source) &&
     (!needle || entry.raw.toLocaleLowerCase().includes(needle)),
   );
 }

@@ -12,6 +12,8 @@ export interface ParsedFile {
   /** Workbook sheets when parsing Excel; empty for Word/PDF. */
   sheets: ParsedSheet[];
   pageCount?: number;
+  /** One-based pages without extractable text (e.g. scans, drawings, or blank pages). */
+  emptyTextPages?: number[];
 }
 
 export interface ParsedSheet {
@@ -27,14 +29,27 @@ export function sheetsToText(sheets: ParsedSheet[]): string {
 
 export interface ParseFileOptions {
   kind?: SupportedFileKind;
+  /** Locally hosted PDF.js assets, matching the installed pdfjs-dist version. */
+  pdfAssetBaseUrl?: string;
+}
+
+export class FileTypeError extends Error {
+  constructor() {
+    super("Unsupported file type for this tool.");
+    this.name = "FileTypeError";
+  }
 }
 
 function detectKind(file: File): SupportedFileKind {
   const name = file.name.toLowerCase();
-  if (name.endsWith(".docx") || file.type.includes("wordprocessingml")) return "word";
-  if (name.endsWith(".xlsx") || name.endsWith(".xls") || file.type.includes("spreadsheet")) return "excel";
-  if (name.endsWith(".pdf") || file.type === "application/pdf") return "pdf";
-  throw new Error("Unsupported file type. Use DOCX, XLSX/XLS, or PDF.");
+  // Prefer the extension: browser MIME types may be absent or inaccurate.
+  if (name.endsWith(".docx")) return "word";
+  if (name.endsWith(".xlsx") || name.endsWith(".xls")) return "excel";
+  if (name.endsWith(".pdf")) return "pdf";
+  if (file.type.includes("wordprocessingml")) return "word";
+  if (file.type.includes("spreadsheet") || file.type === "application/vnd.ms-excel") return "excel";
+  if (file.type === "application/pdf") return "pdf";
+  throw new FileTypeError();
 }
 
 async function parseWord(file: File): Promise<Pick<ParsedFile, "text" | "sheets">> {
@@ -77,24 +92,48 @@ export async function exportExcel(sheets: ParsedSheet[], filename = "toolora-edi
   URL.revokeObjectURL(url);
 }
 
-async function parsePdf(file: File): Promise<Pick<ParsedFile, "text" | "sheets" | "pageCount">> {
-  // disableWorker keeps this usable in Next.js and in a plain browser without
-  // a separately hosted worker file or a desktop PDF application.
+async function parsePdf(file: File, options: ParseFileOptions): Promise<Pick<ParsedFile, "text" | "sheets" | "pageCount" | "emptyTextPages">> {
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
-  const source = { data: new Uint8Array(await file.arrayBuffer()), disableWorker: true } as never;
-  const pdf = await pdfjs.getDocument(source).promise;
-  const pages: string[] = [];
-  for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
-    const page = await pdf.getPage(pageNumber);
-    const content = await page.getTextContent();
-    pages.push(content.items.map((item) => ("str" in item ? item.str : "")).join(" ").trim());
+  const assets = (options.pdfAssetBaseUrl ?? `/pdfjs/${pdfjs.version}/`).replace(/\/?$/, "/");
+  pdfjs.GlobalWorkerOptions.workerSrc = `${assets}pdf.worker.min.mjs`;
+  const task = pdfjs.getDocument({
+    data: new Uint8Array(await file.arrayBuffer()),
+    cMapUrl: `${assets}cmaps/`,
+    cMapPacked: true,
+    standardFontDataUrl: `${assets}standard_fonts/`,
+    wasmUrl: `${assets}wasm/`,
+  });
+  try {
+    const pdf = await task.promise;
+    const pages: string[] = [];
+    const emptyTextPages: number[] = [];
+    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+      const page = await pdf.getPage(pageNumber);
+      try {
+        const content = await page.getTextContent();
+        const text = content.items.map((item) => "str" in item ? `${item.str}${item.hasEOL ? "\n" : " "}` : "").join("").replace(/[ \t]+\n/g, "\n").trim();
+        pages.push(text);
+        if (!text) emptyTextPages.push(pageNumber);
+      } finally {
+        page.cleanup();
+      }
+    }
+    return {
+      text: pages.some(Boolean) ? pages.map((page, index) => `## Page ${index + 1}\n${page}`).join("\n\n") : "",
+      sheets: [],
+      pageCount: pdf.numPages,
+      emptyTextPages,
+    };
+  } finally {
+    // Release the document and worker on success and on corrupt/encrypted files.
+    await task.destroy();
   }
-  return { text: pages.map((page, index) => `## Page ${index + 1}\n${page}`).join("\n\n"), sheets: [], pageCount: pdf.numPages };
 }
 
 /** Extracts a local file in the browser. The file bytes never leave the page. */
 export async function parseFile(file: File, options: ParseFileOptions = {}): Promise<ParsedFile> {
-  const kind = options.kind ?? detectKind(file);
-  const parsed = kind === "word" ? await parseWord(file) : kind === "excel" ? await parseExcel(file) : await parsePdf(file);
+  const kind = detectKind(file);
+  if (options.kind && options.kind !== kind) throw new FileTypeError();
+  const parsed = kind === "word" ? await parseWord(file) : kind === "excel" ? await parseExcel(file) : await parsePdf(file, options);
   return { kind, name: file.name, mimeType: file.type, size: file.size, ...parsed };
 }

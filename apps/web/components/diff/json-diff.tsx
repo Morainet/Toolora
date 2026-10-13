@@ -15,6 +15,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn, byteLength, formatBytes } from "@/lib/utils";
+import { embeddedWorkspaceClass, focusedWorkspaceClass } from "@/lib/workspace-layout";
 
 // Monaco DiffEditor is client-only; lazy-load the wrapper with ssr disabled.
 const TooloraDiffEditor = dynamic(() => import("./diff-editor"), {
@@ -57,6 +58,7 @@ interface JsonDiffProps {
   title: string;
   description: string;
   embedded?: boolean;
+  focused?: boolean;
 }
 
 /**
@@ -64,7 +66,7 @@ interface JsonDiffProps {
  * below showing the live differences. Validation runs in the worker so the UI
  * stays responsive on big documents.
  */
-export function JsonDiff({ title, description, embedded = false }: JsonDiffProps) {
+export function JsonDiff({ title, description, embedded = false, focused = false }: JsonDiffProps) {
   const t = useTranslations("diff");
   const tStatus = useTranslations("tool.status");
   const { process } = useJsonWorker();
@@ -131,7 +133,7 @@ export function JsonDiff({ title, description, embedded = false }: JsonDiffProps
     hasInput && original.trim() === modified.trim() && original.trim().length > 0;
 
   return (
-    <div className={cn("flex min-w-0 flex-col", embedded ? "min-h-[700px] p-4 sm:p-5 xl:h-[calc(100svh-16rem)] xl:min-h-[650px]" : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
+    <div className={cn("flex min-w-0 flex-col", embedded ? focused ? focusedWorkspaceClass : embeddedWorkspaceClass : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
       {/* Header */}
       <div className={cn("mb-4 flex flex-wrap items-end gap-3", embedded ? "justify-end" : "justify-between")}>
         {!embedded && <div>
@@ -187,7 +189,7 @@ export function JsonDiff({ title, description, embedded = false }: JsonDiffProps
       </div>
 
       {/* Top: dual inputs */}
-      <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="mb-3 grid grid-cols-1 gap-3 md:grid-cols-2">
         <DiffInput
           value={original}
           onChange={setOriginal}
@@ -203,7 +205,7 @@ export function JsonDiff({ title, description, embedded = false }: JsonDiffProps
       </div>
 
       {/* Bottom: full-width diff editor */}
-      <div className="relative flex min-h-[280px] flex-1 flex-col overflow-hidden rounded-xl border border-border bg-card shadow-soft">
+      <div className="relative flex min-h-[240px] flex-1 flex-col overflow-hidden rounded-xl border border-border bg-card shadow-soft">
         <div className="pointer-events-none absolute left-3 top-3 z-10 flex items-center gap-2">
           <span className="select-none rounded-md bg-background/80 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground backdrop-blur">
             {t("result")}

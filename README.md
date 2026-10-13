@@ -99,8 +99,16 @@ reader, a backend, or an upload. The web app exposes them at:
 - `/excel-parser` — edit worksheet cells and export an XLSX file
 - `/pdf-parser` — extract text page by page
 
-These tools extract text and table data. Scanned PDFs that contain only images
-require OCR, which is intentionally not enabled by default.
+These tools extract text and table data. PDFs retain page boundaries and text
+line breaks. Pages without extractable text are reported explicitly; scanned
+images require OCR, which is not currently supported. Password-protected PDFs
+must be unlocked before opening them here.
+
+PDF.js runs in a local worker. The web app prepares matching worker, CMap,
+standard-font and WASM assets at `public/pdfjs/<version>/` during dev/build.
+Other consumers of `@parsy/file-parser` must host the same assets from their
+installed `pdfjs-dist` package at `/pdfjs/<version>/`, or pass
+`pdfAssetBaseUrl` to `parseFile` to override that directory.
 
 ---
 
@@ -120,11 +128,21 @@ pnpm dev
 
 Then open **http://localhost:3000**.
 
+Development and build commands automatically copy the installed Monaco runtime
+to `apps/web/public/monaco/<version>/vs`. Editors, language services, and workers
+load from this local path rather than a CDN. These generated assets are ignored
+by Git, included in the build cache, and must be deployed with the app's `public`
+directory. The same applies to the generated PDF.js assets in
+`apps/web/public/pdfjs/<version>/`.
+
+For navigation performance checks, use a production build: development mode
+compiles routes on demand and does not enable Next.js route prefetching.
+
 ### Other scripts
 
 ```bash
 pnpm build        # production build (all packages, via Turborepo)
-pnpm start        # serve the production build
+pnpm --filter @parsy/web start  # serve the production build
 pnpm typecheck    # tsc --noEmit across the workspace
 pnpm lint         # next lint
 pnpm clean        # remove build artifacts + node_modules

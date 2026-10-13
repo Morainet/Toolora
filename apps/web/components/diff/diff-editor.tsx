@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import "@/lib/monaco";
 import { useTheme } from "next-themes";
 import type { editor } from "monaco-editor";
 

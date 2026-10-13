@@ -18,6 +18,7 @@ import { useCopy } from "@/hooks/use-copy";
 import { useHotkey } from "@/hooks/use-hotkey";
 import { useJsonStore } from "@/store/json-store";
 import { SAMPLE_JSON } from "@/lib/sample-json";
+import { embeddedWorkspaceClass, focusedWorkspaceClass } from "@/lib/workspace-layout";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -49,6 +50,7 @@ interface JsonConverterProps {
   title: string;
   description: string;
   embedded?: boolean;
+  focused?: boolean;
 }
 
 /** File extension + Monaco language per target. */
@@ -68,7 +70,7 @@ const LANG_META: Record<TargetLanguage, { ext: string; mono: string }> = {
  * Conversion runs on the main thread (the converter is fast, synchronous
  * type inference — no need for a worker).
  */
-export function JsonConverter({ title, description, embedded = false }: JsonConverterProps) {
+export function JsonConverter({ title, description, embedded = false, focused = false }: JsonConverterProps) {
   const t = useTranslations("converter");
   const tEditor = useTranslations("editor");
   const tStatus = useTranslations("tool.status");
@@ -139,7 +141,7 @@ export function JsonConverter({ title, description, embedded = false }: JsonConv
   const hasOutput = output.length > 0;
 
   return (
-    <div className={cn("flex min-w-0 flex-col", embedded ? "min-h-[700px] p-4 sm:p-5 xl:h-[calc(100svh-16rem)] xl:min-h-[650px]" : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
+    <div className={cn("flex min-w-0 flex-col", embedded ? focused ? focusedWorkspaceClass : embeddedWorkspaceClass : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
       {/* Header */}
       <div className={cn("mb-4 flex flex-wrap items-end gap-3", embedded ? "justify-end" : "justify-between")}>
         {!embedded && <div>
@@ -213,7 +215,7 @@ export function JsonConverter({ title, description, embedded = false }: JsonConv
       </div>
 
       {/* Editors */}
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 py-4 md:grid-cols-2">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 py-3 md:grid-cols-2">
         {/* Input */}
         <Pane label={t("input")} badge={input ? "input" : undefined}>
           <MonacoEditor

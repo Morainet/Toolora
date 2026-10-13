@@ -72,12 +72,13 @@ export function Toolbar({
   copied,
 }: ToolbarProps) {
   const t = useTranslations("tool.toolbar");
+  const tWorkspace = useTranslations("jsonWorkspace");
 
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 shadow-soft">
       <ToolButton
         label={t(mode)}
-        tip={t(mode === "format" ? "formatTip" : mode === "minify" ? "minifyTip" : "validateTip")}
+        tip={`${t(mode === "format" ? "formatTip" : mode === "minify" ? "minifyTip" : "validateTip")} · ${tWorkspace("shortcut")}`}
         icon={mode === "format" ? <AlignLeft className="h-4 w-4" /> : mode === "minify" ? <Minimize2 className="h-4 w-4" /> : <Check className="h-4 w-4" />}
         onClick={mode === "format" ? onFormat : mode === "minify" ? onMinify : onValidate}
         disabled={processing || !hasInput}

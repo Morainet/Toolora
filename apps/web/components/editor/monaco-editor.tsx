@@ -1,19 +1,13 @@
 "use client";
 
 import * as React from "react";
-import dynamic from "next/dynamic";
+import "@/lib/monaco";
 import Editor, { type OnMount, type OnChange } from "@monaco-editor/react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
-/**
- * Monaco is strictly client-only (it touches `window` / workers at module
- * load). We gate it behind `next/dynamic` with `ssr: false` so it never
- * runs during server rendering.
- *
- * The outer `MonacoEditor` (the default export below) is a thin server-safe
- * wrapper that renders the dynamically-imported inner editor on the client.
- */
+// Parents load this module through one client-only boundary. The runtime is
+// shared with DiffEditor and loaded from the application's local static assets.
 
 interface MonacoEditorProps {
   value: string;
@@ -30,7 +24,7 @@ interface MonacoEditorProps {
   loadingLabel?: string;
 }
 
-function MonacoEditorInner({
+export default function MonacoEditor({
   value,
   language = "json",
   readOnly = false,
@@ -208,20 +202,3 @@ function MonacoEditorInner({
     </div>
   );
 }
-
-// Server-safe wrapper: only mounts the real editor in the browser.
-// We assert the dynamic component to a concrete React component type so the
-// JSX parser and prop-checking have a stable signature to work against.
-const MonacoEditor = dynamic<MonacoEditorProps>(
-  async () => ({ default: MonacoEditorInner }),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
-        Loading editor…
-      </div>
-    ),
-  },
-) as unknown as React.ComponentType<MonacoEditorProps>;
-
-export default MonacoEditor;

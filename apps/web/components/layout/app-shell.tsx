@@ -25,10 +25,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const tTools = useTranslations("tools");
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  // Tool pages prioritize the editor canvas; the full navigation remains one click away.
+  const [collapsed, setCollapsed] = useState(pathname !== "/");
   const live = TOOLS.filter((tool) => tool.available);
 
-  useEffect(() => setMobileOpen(false), [pathname]);
+  useEffect(() => {
+    setMobileOpen(false);
+    setCollapsed(pathname !== "/");
+  }, [pathname]);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -144,7 +148,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <div className={cn("transition-[padding] duration-200", collapsed ? "md:pl-[68px]" : "md:pl-56")}>
-        <header className="sticky top-0 z-30 flex h-[4.5rem] items-center justify-between border-b border-border/70 bg-background/80 px-4 backdrop-blur-xl sm:px-6">
+        <header className={cn("sticky top-0 z-30 flex items-center justify-between border-b border-border/70 bg-background/80 px-4 backdrop-blur-xl sm:px-6", pathname === "/" ? "h-[4.5rem]" : "h-14")}>
           <div className="flex items-center gap-3">
             <button type="button" onClick={() => setMobileOpen(true)} className="rounded-lg p-2 text-muted-foreground hover:bg-muted md:hidden" aria-label={t("openMenu")}>
               <Menu className="h-5 w-5" />
@@ -180,9 +184,18 @@ function NavLink({
   compact: boolean;
   onNavigate?: () => void;
 }) {
+  const warmEditor = () => {
+    if (href === "/json") {
+      void import("@/lib/monaco").then((runtime) => runtime.preloadMonaco()).catch(() => {});
+    }
+  };
+
   return (
     <Link
       href={href}
+      prefetch={true}
+      onMouseEnter={warmEditor}
+      onFocus={warmEditor}
       onClick={onNavigate}
       aria-label={compact ? label : undefined}
       aria-current={active ? "page" : undefined}

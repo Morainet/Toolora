@@ -28,6 +28,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn, byteLength, formatBytes } from "@/lib/utils";
+import { embeddedWorkspaceClass, focusedWorkspaceClass } from "@/lib/workspace-layout";
 
 // Monaco is client-only; load it lazily.
 const MonacoEditor = dynamic(() => import("@/components/editor/monaco-editor"), {
@@ -43,6 +44,7 @@ interface JsonRepairProps {
   title: string;
   description: string;
   embedded?: boolean;
+  focused?: boolean;
 }
 
 /**
@@ -50,7 +52,7 @@ interface JsonRepairProps {
  * valid JSON). Uses the jsonrepair library via the worker pipeline so big
  * inputs don't block the UI.
  */
-export function JsonRepair({ title, description, embedded = false }: JsonRepairProps) {
+export function JsonRepair({ title, description, embedded = false, focused = false }: JsonRepairProps) {
   const t = useTranslations("repair");
   const tEditor = useTranslations("editor");
   const tErrors = useTranslations("errors");
@@ -135,7 +137,7 @@ export function JsonRepair({ title, description, embedded = false }: JsonRepairP
   const processing = repairState === "processing";
 
   return (
-    <div className={cn("flex min-w-0 flex-col", embedded ? "min-h-[700px] p-4 sm:p-5 xl:h-[calc(100svh-16rem)] xl:min-h-[650px]" : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
+    <div className={cn("flex min-w-0 flex-col", embedded ? focused ? focusedWorkspaceClass : embeddedWorkspaceClass : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
       {/* Header */}
       {!embedded && <div className="mb-4">
         <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight sm:text-2xl">
@@ -193,7 +195,7 @@ export function JsonRepair({ title, description, embedded = false }: JsonRepairP
       </div>
 
       {/* Editors */}
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 py-4 md:grid-cols-2">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 py-3 md:grid-cols-2">
         {/* Input */}
         <Pane label={t("input")} badge={input ? "input" : undefined}>
           <MonacoEditor

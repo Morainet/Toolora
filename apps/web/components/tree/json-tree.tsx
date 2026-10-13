@@ -19,6 +19,7 @@ import {
   type TreeNode,
 } from "@/lib/tree";
 import { byteLength, cn, formatBytes } from "@/lib/utils";
+import { embeddedWorkspaceClass, focusedWorkspaceClass } from "@/lib/workspace-layout";
 
 // Monaco is client-only; load it lazily (same pattern as JsonTool).
 const MonacoEditor = dynamic(() => import("@/components/editor/monaco-editor"), {
@@ -34,6 +35,7 @@ interface JsonTreeProps {
   title: string;
   description: string;
   embedded?: boolean;
+  focused?: boolean;
 }
 
 /** Map a JsonErrorCode to a localized message via the `errors` namespace. */
@@ -59,7 +61,7 @@ function useLocalizedErrorMessage() {
  * change (debounced); the parsed tree drives the right pane. Validation runs
  * in the Web Worker (reuse) so the UI thread stays free on big input.
  */
-export function JsonTree({ title, description, embedded = false }: JsonTreeProps) {
+export function JsonTree({ title, description, embedded = false, focused = false }: JsonTreeProps) {
   const t = useTranslations("tree");
   const tEditor = useTranslations("editor");
   const tStatus = useTranslations("tool.status");
@@ -179,7 +181,7 @@ export function JsonTree({ title, description, embedded = false }: JsonTreeProps
   }
 
   return (
-    <div className={cn("flex min-w-0 flex-col", embedded ? "min-h-[700px] p-4 sm:p-5 xl:h-[calc(100svh-16rem)] xl:min-h-[650px]" : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
+    <div className={cn("flex min-w-0 flex-col", embedded ? focused ? focusedWorkspaceClass : embeddedWorkspaceClass : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
       {/* Header */}
       {!embedded && <div className="mb-4">
         <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">{title}</h1>
@@ -199,7 +201,7 @@ export function JsonTree({ title, description, embedded = false }: JsonTreeProps
       />
 
       {/* Editors */}
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 py-4 md:grid-cols-2">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 py-3 md:grid-cols-2">
         {/* Left: Monaco input */}
         <div className="relative flex min-h-[260px] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-soft">
           <span className="pointer-events-none absolute left-3 top-3 z-10 select-none rounded-md bg-background/80 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground backdrop-blur">

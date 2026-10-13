@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { Download, FileSpreadsheet, Plus, Upload } from "lucide-react";
-import { exportExcel, parseFile, sheetsToText, type ParsedFile, type ParsedSheet, type SupportedFileKind } from "@parsy/file-parser";
+import { exportExcel, FileTypeError, parseFile, sheetsToText, type ParsedFile, type ParsedSheet, type SupportedFileKind } from "@parsy/file-parser";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 
@@ -71,7 +71,7 @@ function ExcelGrid({ file, setFile }: { file: ParsedFile; setFile: (file: Parsed
         <input value={selectedValue} onChange={(event) => setSelectedValue(event.target.value)} aria-label={t("formulaBar")} className="min-w-0 flex-1 rounded-md border border-border bg-background px-3 py-1 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" />
       </div>
 
-      <div className="max-h-[min(64vh,640px)] min-h-[360px] overflow-auto">
+      <div className="h-[calc(100svh-16rem)] min-h-[420px] overflow-auto">
         <table className="min-w-full border-collapse text-sm">
           <thead className="sticky top-0 z-20">
             <tr className="bg-muted/90 text-xs text-muted-foreground backdrop-blur">
@@ -105,25 +105,40 @@ function ExcelGrid({ file, setFile }: { file: ParsedFile; setFile: (file: Parsed
 export function FileParser({ kind, title, description }: { kind: SupportedFileKind; title: string; description: string }) {
   const t = useTranslations("fileParser");
   const inputRef = useRef<HTMLInputElement>(null);
+  const parsingRef = useRef(false);
   const [file, setFile] = useState<ParsedFile | null>(null);
+  const [fileVersion, setFileVersion] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function onChange(selected: File | undefined) {
-    if (!selected) return;
+    if (!selected || parsingRef.current) return;
+    parsingRef.current = true;
     setBusy(true); setError(null);
-    try { setFile(await parseFile(selected, { kind })); }
-    catch (cause) { setFile(null); setError(cause instanceof Error ? cause.message : t("failed")); }
-    finally { setBusy(false); }
+    try { setFile(await parseFile(selected, { kind })); setFileVersion(version => version + 1); }
+    catch (cause) {
+      if (cause instanceof FileTypeError) setError(t("wrongType", { format: t(`${kind}Hint`) }));
+      else if (cause instanceof Error && cause.name === "PasswordException") setError(t("passwordRequired"));
+      else if (cause instanceof Error && cause.name === "InvalidPDFException") setError(t("invalidPdf"));
+      else setError(t("failedHint"));
+    }
+    finally { parsingRef.current = false; setBusy(false); }
   }
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-9rem)] w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6">
-      <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">Toolora workspace</p><h1 className="text-3xl font-semibold tracking-tight">{title}</h1><p className="mt-2 text-muted-foreground">{description}</p></div><p className="text-sm text-muted-foreground">{t("privacy")}</p></header>
-      {!file && <section onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); void onChange(event.dataTransfer.files[0]); }} className="flex min-h-[360px] flex-col items-center justify-center rounded-3xl border border-dashed border-primary/35 bg-primary/[0.035] p-8 text-center transition-colors hover:bg-primary/[0.06]"><div className="mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-primary/10 text-primary"><Upload className="h-7 w-7" /></div><h2 className="text-xl font-semibold">{busy ? t("parsing") : t("dropTitle")}</h2><p className="mt-2 max-w-md text-sm text-muted-foreground">{t(`${kind}Hint`)} · {t("dropHint")}</p><input ref={inputRef} id={`${kind}-file`} type="file" accept={ACCEPT[kind]} className="sr-only" onChange={(event) => void onChange(event.target.files?.[0])} /><Button className="mt-6 rounded-xl px-5" onClick={() => inputRef.current?.click()} disabled={busy}>{busy ? t("parsing") : t("choose")}</Button></section>}
+    <main className="flex min-h-[calc(100svh-7rem)] w-full min-w-0 flex-col gap-4 px-3 py-4 sm:px-4 lg:px-5">
+      <header className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center"><div className="min-w-0"><h1 className="text-2xl font-semibold tracking-tight">{title}</h1><p className="text-sm text-muted-foreground">{description}</p></div><p className="shrink-0 text-xs text-muted-foreground">{t("privacy")}</p></header>
+      <input ref={inputRef} id={`${kind}-file`} type="file" accept={ACCEPT[kind]} aria-label={t("choose")} className="sr-only" disabled={busy} onChange={(event) => {
+        const selected = event.target.files?.[0];
+        event.target.value = ""; // Allow retrying the same file after a failure.
+        void onChange(selected);
+      }} />
+      {!file && <section aria-busy={busy} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); void onChange(event.dataTransfer.files[0]); }} className="flex min-h-[calc(100svh-14rem)] flex-col items-center justify-center rounded-2xl border border-dashed border-primary/35 bg-primary/[0.035] p-8 text-center transition-colors hover:bg-primary/[0.06]"><div className="mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-primary/10 text-primary"><Upload className="h-7 w-7" /></div><h2 className="text-xl font-semibold">{busy ? t("parsing") : t(`${kind}DropTitle`)}</h2><p className="mt-2 max-w-md text-sm text-muted-foreground">{t(`${kind}Hint`)} · {t("dropHint")}</p><Button className="mt-6 rounded-xl px-5" onClick={() => inputRef.current?.click()} disabled={busy}>{busy ? t("parsing") : t("choose")}</Button></section>}
       {error && <p role="alert" className="rounded-xl border border-destructive/50 p-4 text-sm text-destructive">{error}</p>}
-      {file && kind === "excel" && <ExcelGrid file={file} setFile={setFile} />}
-      {file && kind !== "excel" && <section className="rounded-2xl border border-border/80 bg-card p-5 shadow-xl shadow-slate-900/[0.06]"><div className="mb-3 flex items-center justify-between gap-4"><h2 className="text-lg font-medium">{file.name}</h2><Button variant="outline" onClick={() => void navigator.clipboard.writeText(file.text)}>{t("copy")}</Button></div><textarea readOnly value={file.text} aria-label={t("result")} className="min-h-[28rem] w-full rounded-xl border bg-muted/20 p-4 font-mono text-sm outline-none" /></section>}
+      {file && <div className="flex items-center justify-between gap-3"><p className="text-sm text-muted-foreground">{file.pageCount != null ? t("pageCount", { count: file.pageCount }) : t(`${kind}Hint`)}</p><Button variant="outline" disabled={busy} onClick={() => inputRef.current?.click()}>{busy ? t("parsing") : t("replaceFile")}</Button></div>}
+      {!!file?.emptyTextPages?.length && <p role="status" className="rounded-xl border border-border bg-muted/40 p-4 text-sm text-muted-foreground">{file.emptyTextPages.length === file.pageCount ? t("noPdfText") : t("partialPdfText", { pages: file.emptyTextPages.join(", ") })}</p>}
+      {file && kind === "excel" && <ExcelGrid key={fileVersion} file={file} setFile={setFile} />}
+      {file && kind !== "excel" && <section className="flex min-w-0 flex-1 flex-col rounded-2xl border border-border/80 bg-card p-4 shadow-soft"><div className="mb-3 flex items-center justify-between gap-4"><h2 className="min-w-0 truncate text-base font-medium">{file.name}</h2><Button variant="outline" disabled={!file.text} onClick={() => void navigator.clipboard.writeText(file.text)}>{t("copy")}</Button></div><textarea readOnly value={file.text} aria-label={t("result")} className="h-[calc(100svh-15rem)] min-h-[480px] w-full flex-1 resize-y rounded-xl border bg-muted/20 p-4 font-mono text-sm outline-none" /></section>}
     </main>
   );
 }
