@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { FileTypeError, parseFile } from "./index";
 
 const pdfjs = vi.hoisted(() => ({
-  version: "5.7.284",
+  version: "6.4.299",
   GlobalWorkerOptions: { workerSrc: "" },
   getDocument: vi.fn(),
 }));
@@ -26,10 +26,10 @@ describe("PDF parsing", () => {
   it("configures a matching local worker and supporting assets", async () => {
     const { task } = mockDocument([[{ str: "Hello", hasEOL: false }]]);
     await parseFile(pdfFile());
-    expect(pdfjs.GlobalWorkerOptions.workerSrc).toBe("/pdfjs/5.7.284/pdf.worker.min.mjs");
+    expect(pdfjs.GlobalWorkerOptions.workerSrc).toBe(`/pdfjs/${pdfjs.version}/pdf.worker.min.mjs`);
     expect(pdfjs.getDocument).toHaveBeenCalledWith({
-      data: expect.any(Uint8Array), cMapUrl: "/pdfjs/5.7.284/cmaps/", cMapPacked: true,
-      standardFontDataUrl: "/pdfjs/5.7.284/standard_fonts/", wasmUrl: "/pdfjs/5.7.284/wasm/",
+      data: expect.any(Uint8Array), cMapUrl: `/pdfjs/${pdfjs.version}/cmaps/`, cMapPacked: true,
+      standardFontDataUrl: `/pdfjs/${pdfjs.version}/standard_fonts/`, wasmUrl: `/pdfjs/${pdfjs.version}/wasm/`,
     });
     expect(task.destroy).toHaveBeenCalledOnce();
   });

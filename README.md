@@ -116,12 +116,13 @@ installed `pdfjs-dist` package at `/pdfjs/<version>/`, or pass
 
 ### Prerequisites
 
-- **Node.js ≥ 20** (built and tested on Node 22)
-- **pnpm ≥ 9** (`npm i -g pnpm` if you don't have it)
+- **Node.js 22.13+ (22 LTS), or 24+** — required by PDF.js; `.nvmrc` selects Node 22.
+- **pnpm 10.7.0** (see the pinned `packageManager` version)
 
 ### Install & run
 
 ```bash
+nvm use          # if you use nvm; install Node 22 first when needed
 pnpm install
 pnpm dev
 ```
@@ -193,6 +194,9 @@ That's it — routing, sitemap, and metadata pick it up automatically.
 - **Local persistence only stores preferences** (indent size, word wrap) — never
   your JSON. See `apps/web/store/json-store.ts` (`partialize`).
 - Output is rendered through Monaco / standard React escaping to avoid XSS.
+- Dependency upgrades and compatibility overrides are documented in
+  [docs/dependency-security.md](docs/dependency-security.md). Run `pnpm audit`
+  after changing dependencies; do not suppress advisories to make the check pass.
 
 ---
 

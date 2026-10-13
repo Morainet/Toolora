@@ -1,4 +1,4 @@
-import { cp, mkdir, readFile } from "node:fs/promises";
+import { cp, mkdir, readFile, readdir, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -16,4 +16,12 @@ await Promise.all(["cmaps", "standard_fonts", "wasm"].map(name =>
   cp(join(source, name), join(destination, name), { recursive: true }),
 ));
 await cp(join(source, "LICENSE"), join(destination, "LICENSE"));
+
+// These version directories are generated, never user documents. Do not ship
+// old vulnerable workers left behind by a previous local dev/build run.
+for (const entry of await readdir(dirname(destination), { withFileTypes: true })) {
+  if (entry.isDirectory() && /^\d+\.\d+\.\d+$/.test(entry.name) && entry.name !== version) {
+    await rm(join(dirname(destination), entry.name), { recursive: true });
+  }
+}
 console.log(`Local PDF.js ${version} ready`);

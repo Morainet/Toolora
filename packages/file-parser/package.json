@@ -22,11 +22,12 @@
   },
   "dependencies": {
     "mammoth": "^1.8.0",
-    "pdfjs-dist": "^5.4.149",
-    "xlsx": "^0.18.5"
+    "pdfjs-dist": "^6.2.108",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
+    "@types/node": "^22.10.0",
     "typescript": "^5.7.0",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.11"
   }
 }
