@@ -431,6 +431,8 @@
     "excelHint": "支持 XLSX 和 XLS 文件",
     "addRow": "新增行",
     "export": "导出 Excel",
+    "exporting": "导出中…",
+    "exportFailed": "导出失败，请重试。",
     "editableHint": "点击单元格即可修改",
     "swipeColumns": "左右滑动查看更多列",
     "wordDropTitle": "拖入 Word 文件提取文本",

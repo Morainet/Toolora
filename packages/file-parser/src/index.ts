@@ -100,7 +100,7 @@ export async function openPdf(file: File, options: Pick<ParseFileOptions, "pdfAs
 }
 
 /** Export the edited sheet model without needing Excel installed. */
-export async function exportExcel(sheets: ParsedSheet[], filename = "toolora-edited.xlsx"): Promise<void> {
+export async function createExcelBlob(sheets: ParsedSheet[]): Promise<Blob> {
   const XLSX = await import("xlsx");
   const workbook = XLSX.utils.book_new();
   for (const sheet of sheets) {
@@ -108,13 +108,20 @@ export async function exportExcel(sheets: ParsedSheet[], filename = "toolora-edi
     XLSX.utils.book_append_sheet(workbook, worksheet, sheet.name.slice(0, 31) || "Sheet1");
   }
   const bytes = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-  const blob = new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+  return new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+}
+
+export function downloadExcelBlob(blob: Blob, filename = "toolora-edited.xlsx"): void {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
   anchor.download = filename;
   anchor.click();
   URL.revokeObjectURL(url);
+}
+
+export async function exportExcel(sheets: ParsedSheet[], filename = "toolora-edited.xlsx"): Promise<void> {
+  downloadExcelBlob(await createExcelBlob(sheets), filename);
 }
 
 async function parsePdf(file: File, options: ParseFileOptions): Promise<Pick<ParsedFile, "text" | "sheets" | "pageCount" | "emptyTextPages">> {

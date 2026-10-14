@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
-import { ArrowLeftRight, Download, FileSpreadsheet, Plus, Upload } from "lucide-react";
-import { exportExcel, FileTypeError, parseFile, sheetsToText, type ParsedFile, type ParsedSheet, type SupportedFileKind } from "@parsy/file-parser";
+import { useRef, useState } from "react";
+import { Upload } from "lucide-react";
+import { FileTypeError, parseFile, type ParsedFile, type SupportedFileKind } from "@parsy/file-parser";
 import { Button } from "@/components/ui/button";
+import { ExcelGrid } from "@/components/file-parser/excel-grid";
 import { useToolFocus } from "@/components/layout/tool-focus-context";
+import { parseExcelInWorker } from "@/lib/parse-excel-worker";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
@@ -14,99 +16,6 @@ const ACCEPT: Record<EditableFileKind, string> = {
   word: ".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   excel: ".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel",
 };
-
-function updateSheet(file: ParsedFile, sheetIndex: number, update: (sheet: ParsedSheet) => ParsedSheet): ParsedFile {
-  const sheets = file.sheets.map((sheet, index) => index === sheetIndex ? update(sheet) : sheet);
-  return { ...file, sheets, text: sheetsToText(sheets) };
-}
-
-function ExcelGrid({ file, setFile }: { file: ParsedFile; setFile: (file: ParsedFile) => void }) {
-  const t = useTranslations("fileParser");
-  const focused = useToolFocus();
-  const [activeSheet, setActiveSheet] = useState(0);
-  const [selected, setSelected] = useState({ row: 0, column: 0 });
-  const [showSwipeHint, setShowSwipeHint] = useState(true);
-  const sheet = file.sheets[activeSheet];
-  const columnCount = useMemo(() => Math.max(1, ...(sheet?.rows.map((row) => row.length) ?? [1])), [sheet]);
-
-  if (!sheet) return null;
-  const selectedValue = sheet.rows[selected.row]?.[selected.column] ?? "";
-  const cellAddress = `${String.fromCharCode(65 + selected.column)}${selected.row + 1}`;
-
-  function setCell(rowIndex: number, columnIndex: number, value: string) {
-    setFile(updateSheet(file, activeSheet, (current) => ({
-      ...current,
-      rows: current.rows.map((row, index) => {
-        if (index !== rowIndex) return row;
-        const next = [...row];
-        while (next.length <= columnIndex) next.push("");
-        next[columnIndex] = value;
-        return next;
-      }),
-    })));
-  }
-
-  function addRow() {
-    setFile(updateSheet(file, activeSheet, (current) => ({ ...current, rows: [...current.rows, Array(columnCount).fill("")] })));
-  }
-
-  function addSheet() {
-    const sheets = [...file.sheets, { name: `Sheet${file.sheets.length + 1}`, rows: [[""]] }];
-    setFile({ ...file, sheets, text: sheetsToText(sheets) });
-    setActiveSheet(file.sheets.length);
-  }
-
-  function setSelectedValue(value: string) {
-    setCell(selected.row, selected.column, value);
-  }
-
-  return (
-    <section className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-xl shadow-slate-900/[0.06]">
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/80 px-4 py-3 sm:px-5">
-        <div className="flex min-w-0 items-center gap-3">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-500/10 text-emerald-600"><FileSpreadsheet className="h-5 w-5" /></span>
-          <div className="min-w-0"><h2 className="truncate text-sm font-semibold">{file.name}</h2><p className="text-xs text-muted-foreground">{t("localOnly")} · {file.sheets.length} {t("sheets")}</p></div>
-        </div>
-        <div className="flex gap-2"><Button size="sm" className="h-10 sm:h-8" variant="outline" onClick={addRow}><Plus className="mr-1.5 h-4 w-4" />{t("addRow")}</Button><Button size="sm" className="h-10 sm:h-8" onClick={() => void exportExcel(file.sheets)}><Download className="mr-1.5 h-4 w-4" />{t("export")}</Button></div>
-      </div>
-
-      <div className="flex items-center gap-2 border-b border-border/80 bg-muted/25 px-4 py-2">
-        <span className="w-14 rounded-md border border-border bg-background px-2 py-1 text-center font-mono text-xs text-muted-foreground">{cellAddress}</span>
-        <span className="text-xs text-muted-foreground">fx</span>
-        <input value={selectedValue} onChange={(event) => setSelectedValue(event.target.value)} aria-label={t("formulaBar")} className="min-w-0 flex-1 rounded-md border border-border bg-background px-3 py-1.5 text-base outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 sm:py-1 sm:text-sm" />
-      </div>
-
-      {columnCount > 1 && showSwipeHint && <p className="flex items-center justify-center gap-2 border-b border-border/80 bg-primary/[0.04] px-3 py-2 text-xs text-muted-foreground sm:hidden"><ArrowLeftRight className="h-4 w-4" />{t("swipeColumns")}</p>}
-      <div onScroll={(event) => { if (event.currentTarget.scrollLeft > 8) setShowSwipeHint(false); }} className={cn("h-[calc(100svh-16rem)] min-h-[420px] overflow-auto overscroll-contain", focused && "h-[calc(100svh-12rem)]")}>
-        <table className="min-w-full border-collapse text-sm">
-          <thead className="sticky top-0 z-20">
-            <tr className="bg-muted/90 text-xs text-muted-foreground backdrop-blur">
-              <th className="sticky left-0 z-30 w-12 border-b border-r border-border/80 px-3 py-2 text-right font-medium">#</th>
-              {Array.from({ length: columnCount }, (_, columnIndex) => <th key={columnIndex} className="min-w-40 border-b border-r border-border/80 px-3 py-2 text-left font-medium last:border-r-0">{String.fromCharCode(65 + columnIndex)}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {sheet.rows.map((row, rowIndex) => <tr key={rowIndex} className="group hover:bg-primary/[0.035]">
-              <td className="sticky left-0 z-10 w-12 border-b border-r border-border/80 bg-muted/65 px-3 py-2 text-right text-xs text-muted-foreground group-hover:bg-primary/[0.08]">{rowIndex + 1}</td>
-              {Array.from({ length: columnCount }, (_, columnIndex) => {
-                const active = selected.row === rowIndex && selected.column === columnIndex;
-                return <td key={columnIndex} className={`min-w-40 border-b border-r border-border/80 p-0 last:border-r-0 ${active ? "relative z-10 ring-2 ring-inset ring-primary" : ""}`}>
-                  <input value={row[columnIndex] ?? ""} onFocus={() => setSelected({ row: rowIndex, column: columnIndex })} onChange={(event) => setCell(rowIndex, columnIndex, event.target.value)} aria-label={`${sheet.name} ${rowIndex + 1}:${columnIndex + 1}`} className="w-full bg-transparent px-3 py-2.5 text-base outline-none sm:text-sm" />
-                </td>;
-              })}
-            </tr>)}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex items-center gap-1 overflow-x-auto border-t border-border/80 bg-muted/25 px-3 pt-2">
-        {file.sheets.map((item, index) => <button key={item.name} type="button" onClick={() => { setActiveSheet(index); setSelected({ row: 0, column: 0 }); }} className={`whitespace-nowrap rounded-t-lg border border-b-0 px-4 py-2 text-sm transition-colors ${index === activeSheet ? "border-border/80 bg-card font-medium text-primary" : "border-transparent text-muted-foreground hover:bg-muted"}`}>{item.name}</button>)}
-        <button type="button" onClick={addSheet} className="ml-1 grid h-8 w-8 place-items-center rounded-lg text-muted-foreground hover:bg-muted" aria-label={t("addSheet")}><Plus className="h-4 w-4" /></button>
-      </div>
-      <div className="flex items-center justify-between border-t border-border/80 px-4 py-2 text-xs text-muted-foreground"><span>{sheet.rows.length} {t("rows")} · {columnCount} {t("columns")}</span><span>{t("editableHint")}</span></div>
-    </section>
-  );
-}
 
 export function FileParser({ kind, title, description }: { kind: EditableFileKind; title: string; description: string }) {
   const t = useTranslations("fileParser");
@@ -122,7 +31,7 @@ export function FileParser({ kind, title, description }: { kind: EditableFileKin
     if (!selected || parsingRef.current) return;
     parsingRef.current = true;
     setBusy(true); setError(null);
-    try { setFile(await parseFile(selected, { kind })); setFileVersion(version => version + 1); }
+    try { setFile(await (kind === "excel" ? parseExcelInWorker(selected) : parseFile(selected, { kind }))); setFileVersion(version => version + 1); }
     catch (cause) {
       if (cause instanceof FileTypeError) setError(t("wrongType", { format: t(`${kind}Hint`) }));
       else setError(t("failedHint"));

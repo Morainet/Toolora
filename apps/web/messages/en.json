@@ -431,6 +431,8 @@
     "excelHint": "XLSX and XLS files supported",
     "addRow": "Add row",
     "export": "Export Excel",
+    "exporting": "Exporting…",
+    "exportFailed": "Could not export the file. Please try again.",
     "editableHint": "Click a cell to edit it",
     "swipeColumns": "Swipe sideways to see more columns",
     "wordDropTitle": "Drop a Word file to extract text",
