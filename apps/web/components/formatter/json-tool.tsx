@@ -4,7 +4,7 @@ import * as React from "react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { ArrowRight, CircleCheck, TriangleAlert, FileText } from "lucide-react";
+import { CircleCheck, TriangleAlert, FileText } from "lucide-react";
 import type { JsonErrorCode } from "@parsy/json-core";
 import { Toolbar } from "@/components/formatter/toolbar";
 import { StatusBar } from "@/components/formatter/status-bar";
@@ -258,9 +258,15 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
   const hasOutput = output.length > 0;
   const errorLine =
     status.state === "invalid" && status.error ? status.error.line : null;
+  const paneHeightClass = focused ? "min-h-[260px]" : "min-h-[460px] md:min-h-[580px]";
+  const workspaceSizeClass = embedded
+    ? focused
+      ? focusedWorkspaceClass
+      : cn(embeddedWorkspaceClass, "min-h-[1000px] p-2 sm:p-3 lg:h-[calc(100svh-6rem)] lg:min-h-[820px]")
+    : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6";
 
   return (
-    <div className={cn("flex min-w-0 flex-col", embedded ? focused ? focusedWorkspaceClass : embeddedWorkspaceClass : "mx-auto min-h-[calc(100svh-4rem)] max-w-[1600px] overflow-y-auto px-4 py-5 md:h-[calc(100svh-4rem)] md:overflow-hidden sm:px-6")}>
+    <div className={cn("flex min-w-0 flex-col", workspaceSizeClass)}>
       {/* Header */}
       {!embedded && <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
@@ -294,11 +300,11 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
       />
 
       {/* Editors */}
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 py-3 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+      <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-1 gap-2 py-2 md:grid-cols-2">
         <Pane
           label={t("panes.input")}
           badge={input ? "input" : undefined}
-          className="min-h-[260px]"
+          className={paneHeightClass}
         >
           <MonacoEditor
             value={input}
@@ -309,22 +315,10 @@ export function JsonTool({ initialMode, title, description, showModeSwitch = tru
           />
         </Pane>
 
-        <div className="hidden items-center justify-center md:flex">
-          <button
-            type="button"
-            onClick={handlePrimary}
-            disabled={!hasInput}
-            aria-label={t("run")}
-            className="group grid h-10 w-10 place-items-center rounded-full border border-border bg-card text-muted-foreground shadow-soft transition-all hover:scale-110 hover:border-primary hover:bg-primary hover:text-primary-foreground disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100 disabled:hover:border-border disabled:hover:bg-card disabled:hover:text-muted-foreground"
-          >
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </button>
-        </div>
-
         <Pane
           label={t("panes.output")}
           badge={hasOutput ? "output" : undefined}
-          className="min-h-[260px]"
+          className={paneHeightClass}
         >
           {(hasOutput || outputMounted) && <div className={cn("h-full", !hasOutput && "hidden")} aria-hidden={!hasOutput}>
             <MonacoEditor
