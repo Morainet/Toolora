@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import {
   Home,
   LayoutGrid,
+  Maximize2,
   Menu,
+  Minimize2,
   PanelLeftClose,
   PanelLeftOpen,
   X,
@@ -18,6 +20,7 @@ import { ToolIcon } from "@/components/tool-icon";
 import { LanguageToggle } from "@/components/language-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SiteFooter } from "@/components/layout/site-header";
+import { ToolFocusContext } from "@/components/layout/tool-focus-context";
 import { cn } from "@/lib/utils";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -25,14 +28,26 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const tTools = useTranslations("tools");
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [toolFocused, setToolFocused] = useState(false);
   // Tool pages prioritize the editor canvas; the full navigation remains one click away.
   const [collapsed, setCollapsed] = useState(pathname !== "/");
   const live = TOOLS.filter((tool) => tool.available);
+  const focusableTool = live.find((tool) => tool.href === pathname && tool.slug !== "json");
 
   useEffect(() => {
     setMobileOpen(false);
     setCollapsed(pathname !== "/");
+    setToolFocused(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!toolFocused) return;
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setToolFocused(false);
+    };
+    window.addEventListener("keydown", onEscape);
+    return () => window.removeEventListener("keydown", onEscape);
+  }, [toolFocused]);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -85,10 +100,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="min-h-svh bg-background">
+    <ToolFocusContext.Provider value={toolFocused}>
+    <div data-tool-focus={toolFocused} className="min-h-svh bg-background">
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 hidden flex-col border-r border-border/80 bg-card transition-[width] duration-200 md:flex",
+          toolFocused && "md:hidden",
           collapsed ? "w-[68px]" : "w-56",
         )}
       >
@@ -119,7 +136,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      {mobileOpen && (
+      {mobileOpen && !toolFocused && (
         <button
           type="button"
           className="fixed inset-0 z-40 bg-black/40 md:hidden"
@@ -130,6 +147,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex w-[min(84vw,280px)] flex-col border-r border-border bg-card shadow-2xl transition-transform md:hidden",
+          toolFocused && "hidden",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
         aria-hidden={!mobileOpen}
@@ -147,23 +165,42 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="flex-1 overflow-y-auto py-5">{navigation(false, true)}</div>
       </aside>
 
-      <div className={cn("transition-[padding] duration-200", collapsed ? "md:pl-[68px]" : "md:pl-56")}>
-        <header className={cn("sticky top-0 z-30 flex items-center justify-between border-b border-border/70 bg-background/80 px-4 backdrop-blur-xl sm:px-6", pathname === "/" ? "h-[4.5rem]" : "h-14")}>
-          <div className="flex items-center gap-3">
-            <button type="button" onClick={() => setMobileOpen(true)} className="rounded-lg p-2 text-muted-foreground hover:bg-muted md:hidden" aria-label={t("openMenu")}>
-              <Menu className="h-5 w-5" />
-            </button>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <LayoutGrid className="h-4 w-4" />
-              <span>{t("workspace")}</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-1"><LanguageToggle /><ThemeToggle /></div>
+      <div className={cn("transition-[padding] duration-200", !toolFocused && (collapsed ? "md:pl-[68px]" : "md:pl-56"))}>
+        <header className={cn("sticky top-0 z-30 flex items-center justify-between border-b border-border/70 bg-background/80 px-4 backdrop-blur-xl sm:px-6", toolFocused ? "h-12" : pathname === "/" ? "h-[4.5rem]" : "h-14")}>
+          {toolFocused && focusableTool ? (
+            <>
+              <div className="flex min-w-0 items-center gap-2 text-sm font-medium">
+                <ToolIcon name={focusableTool.icon} className="h-4 w-4 text-primary" />
+                <span className="truncate">{tTools(`${focusableTool.slug}.short`)}</span>
+                <span className="hidden text-xs font-normal text-muted-foreground sm:inline">· {t("focusMode")}</span>
+              </div>
+              <button type="button" onClick={() => setToolFocused(false)} aria-label={t("exitFocus")} aria-keyshortcuts="Escape" title={t("exitFocus")} className="inline-flex h-8 items-center gap-2 rounded-md border border-border bg-card px-3 text-xs font-medium text-foreground transition-colors hover:bg-muted">
+                <Minimize2 className="h-3.5 w-3.5" />{t("exitFocus")}
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-3">
+                <button type="button" onClick={() => setMobileOpen(true)} className="rounded-lg p-2 text-muted-foreground hover:bg-muted md:hidden" aria-label={t("openMenu")}>
+                  <Menu className="h-5 w-5" />
+                </button>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <LayoutGrid className="h-4 w-4" />
+                  <span>{t("workspace")}</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                {focusableTool && <button type="button" onClick={() => { setMobileOpen(false); setToolFocused(true); }} aria-label={t("enterFocus")} title={t("enterFocus")} className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-card px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"><Maximize2 className="h-3.5 w-3.5" /><span className="hidden sm:inline">{t("enterFocus")}</span></button>}
+                <LanguageToggle /><ThemeToggle />
+              </div>
+            </>
+          )}
         </header>
-        <main className="min-h-[calc(100vh-9rem)]">{children}</main>
-        <SiteFooter />
+        <main className={toolFocused ? "min-h-[calc(100svh-3rem)]" : "min-h-[calc(100vh-9rem)]"}>{children}</main>
+        {!toolFocused && <SiteFooter />}
       </div>
     </div>
+    </ToolFocusContext.Provider>
   );
 }
 

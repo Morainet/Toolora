@@ -10,6 +10,9 @@
     "expandSidebar": "展开侧边栏",
     "openMenu": "打开菜单",
     "closeMenu": "关闭菜单",
+    "enterFocus": "全屏查看",
+    "exitFocus": "退出全屏",
+    "focusMode": "全屏查看",
     "tagline": "快速、私密、本地优先的开发者工具台",
     "description": "一个可扩展的本地优先工具台，在浏览器中处理 JSON、日志、Word、Excel、PDF 和更多文件。",
     "footerPrivacy": "你的数据永不离开浏览器",
@@ -414,7 +417,8 @@
     "rotate": "顺时针旋转",
     "download": "下载原文件",
     "replace": "打开其他文件",
-    "reader": "PDF 阅读区域"
+    "reader": "PDF 阅读区域",
+    "mobileTip": "点击放大后，可左右拖动查看页面细节"
   },
   "fileParser": {
     "choose": "选择文件",
@@ -428,6 +432,7 @@
     "addRow": "新增行",
     "export": "导出 Excel",
     "editableHint": "点击单元格即可修改",
+    "swipeColumns": "左右滑动查看更多列",
     "wordDropTitle": "拖入 Word 文件提取文本",
     "excelDropTitle": "拖入 Excel 文件开始编辑",
     "wrongType": "文件类型不符，当前工具{format}。",

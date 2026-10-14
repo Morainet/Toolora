@@ -5,6 +5,8 @@ import { BookOpen, ChevronLeft, ChevronRight, Download, FileUp, Maximize2, Rotat
 import { useTranslations } from "next-intl";
 import { FileTypeError, openPdf, type PDFDocumentProxy, type RenderTask } from "@parsy/file-parser";
 import { Button } from "@/components/ui/button";
+import { useToolFocus } from "@/components/layout/tool-focus-context";
+import { cn } from "@/lib/utils";
 
 type OpenedPdf = Awaited<ReturnType<typeof openPdf>>;
 
@@ -65,6 +67,7 @@ function PdfPage({ document, pageNumber, width, zoom, rotation, onError, onScale
 
 export function PdfViewer({ title, description }: { title: string; description: string }) {
   const t = useTranslations("pdfViewer");
+  const focused = useToolFocus();
   const inputRef = useRef<HTMLInputElement>(null);
   const readerRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef(0);
@@ -137,7 +140,7 @@ export function PdfViewer({ title, description }: { title: string; description: 
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-  return <main className="flex min-h-[calc(100svh-7rem)] min-w-0 flex-col gap-4 px-3 py-4 sm:px-4 lg:px-5">
+  return <main className={cn("flex min-h-[calc(100svh-7rem)] min-w-0 flex-col gap-4 px-3 py-4 sm:px-4 lg:px-5", focused && "min-h-[calc(100svh-3rem)]")}>
     <header className="flex flex-wrap items-start justify-between gap-3">
       <div><h1 className="text-2xl font-semibold tracking-tight">{title}</h1><p className="mt-1 text-sm text-muted-foreground">{description}</p></div>
       <p className="text-xs text-muted-foreground">{t("privacy")}</p>
@@ -148,37 +151,50 @@ export function PdfViewer({ title, description }: { title: string; description: 
       void selectFile(selected);
     }} />
     {error && <p role="alert" className="rounded-xl border border-destructive/50 p-4 text-sm text-destructive">{error}</p>}
-    {!opened ? <section aria-busy={busy} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); void selectFile(event.dataTransfer.files[0]); }} className="flex min-h-[calc(100svh-15rem)] flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/70 p-8 text-center">
+    {!opened ? <section aria-busy={busy} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); void selectFile(event.dataTransfer.files[0]); }} className={cn("flex min-h-[calc(100svh-15rem)] flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/70 p-8 text-center", focused && "min-h-[calc(100svh-11rem)]")}>
       <div className="mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-primary/10 text-primary"><BookOpen className="h-7 w-7" /></div>
       <h2 className="text-xl font-semibold">{busy ? t("opening") : t("dropTitle")}</h2>
       <p className="mt-2 max-w-md text-sm text-muted-foreground">{t("dropHint")}</p>
       <Button className="mt-6" onClick={() => inputRef.current?.click()} disabled={busy}><Upload />{t("choose")}</Button>
     </section> : <section className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-lg shadow-slate-900/[0.05]">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-3 py-3 sm:px-4">
-        <div className="min-w-0"><h2 className="max-w-[26rem] truncate text-sm font-semibold" title={file?.name}>{file?.name}</h2><p className="text-xs text-muted-foreground">{t("pageCount", { count: opened.document.numPages })}</p></div>
-        <div className="flex flex-wrap items-center gap-1.5">
-          <Button variant="ghost" size="icon" aria-label={t("previous")} disabled={page <= 1} onClick={() => goToPage(page - 1)}><ChevronLeft /></Button>
-          <form className="flex items-center gap-1 text-sm text-muted-foreground" onSubmit={(event) => { event.preventDefault(); goToPage(Number(pageInput) || page); }}>
-            <input aria-label={t("pageNumber")} inputMode="numeric" value={pageInput} onChange={(event) => setPageInput(event.target.value)} onBlur={() => goToPage(Number(pageInput) || page)} className="h-8 w-12 rounded-md border border-input bg-background text-center text-foreground outline-none focus:ring-2 focus:ring-ring" />
-            <span>/ {opened.document.numPages}</span>
-          </form>
-          <Button variant="ghost" size="icon" aria-label={t("next")} disabled={page >= opened.document.numPages} onClick={() => goToPage(page + 1)}><ChevronRight /></Button>
-          <span className="mx-1 h-5 w-px bg-border" />
-          <Button variant="ghost" size="icon" aria-label={t("zoomOut")} onClick={() => setZoom(Math.max(0.5, currentScaleRef.current - 0.25))}><ZoomOut /></Button>
-          <Button variant={zoom === null ? "secondary" : "ghost"} size="sm" onClick={() => setZoom(null)}><Maximize2 />{zoom === null ? t("fitWidth") : `${Math.round(zoom * 100)}%`}</Button>
-          <Button variant="ghost" size="icon" aria-label={t("zoomIn")} onClick={() => setZoom(Math.min(3, currentScaleRef.current + 0.25))}><ZoomIn /></Button>
-          <Button variant="ghost" size="icon" aria-label={t("rotate")} onClick={() => setRotation((current) => (current + 90) % 360)}><RotateCw /></Button>
-          <span className="mx-1 h-5 w-px bg-border" />
-          <Button variant="ghost" size="icon" aria-label={t("download")} onClick={download}><Download /></Button>
-          <Button variant="outline" size="sm" onClick={() => inputRef.current?.click()}><FileUp />{t("replace")}</Button>
+      <div className="flex flex-col gap-2 border-b border-border px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-4 sm:py-3">
+        <div className="flex min-w-0 items-center justify-between gap-2">
+          <div className="min-w-0"><h2 className="max-w-[26rem] truncate text-sm font-semibold" title={file?.name}>{file?.name}</h2><p className="text-xs text-muted-foreground">{t("pageCount", { count: opened.document.numPages })}</p></div>
+          <div className="flex shrink-0 items-center gap-1 sm:hidden">
+            <Button variant="ghost" size="icon" className="h-10 w-10" aria-label={t("download")} onClick={download}><Download /></Button>
+            <Button variant="outline" size="icon" className="h-10 w-10" aria-label={t("replace")} onClick={() => inputRef.current?.click()}><FileUp /></Button>
+          </div>
+        </div>
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-1.5">
+          <div className="flex items-center justify-center gap-2 sm:gap-1.5">
+            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9" aria-label={t("previous")} disabled={page <= 1} onClick={() => goToPage(page - 1)}><ChevronLeft /></Button>
+            <form className="flex items-center gap-1 text-sm text-muted-foreground" onSubmit={(event) => { event.preventDefault(); goToPage(Number(pageInput) || page); }}>
+              <input aria-label={t("pageNumber")} inputMode="numeric" value={pageInput} onChange={(event) => setPageInput(event.target.value)} onBlur={() => goToPage(Number(pageInput) || page)} className="h-10 w-12 rounded-md border border-input bg-background text-center text-base text-foreground outline-none focus:ring-2 focus:ring-ring sm:h-8 sm:text-sm" />
+              <span>/ {opened.document.numPages}</span>
+            </form>
+            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9" aria-label={t("next")} disabled={page >= opened.document.numPages} onClick={() => goToPage(page + 1)}><ChevronRight /></Button>
+          </div>
+          <span className="mx-1 hidden h-5 w-px bg-border sm:block" />
+          <div className="flex items-center justify-center gap-1 sm:gap-1.5">
+            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9" aria-label={t("zoomOut")} onClick={() => setZoom(Math.max(0.5, currentScaleRef.current - 0.25))}><ZoomOut /></Button>
+            <Button variant={zoom === null ? "secondary" : "ghost"} size="sm" className="h-10 sm:h-8" onClick={() => setZoom(null)}><Maximize2 />{zoom === null ? t("fitWidth") : `${Math.round(zoom * 100)}%`}</Button>
+            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9" aria-label={t("zoomIn")} onClick={() => setZoom(Math.min(3, currentScaleRef.current + 0.25))}><ZoomIn /></Button>
+            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9" aria-label={t("rotate")} onClick={() => setRotation((current) => (current + 90) % 360)}><RotateCw /></Button>
+          </div>
+          <span className="mx-1 hidden h-5 w-px bg-border sm:block" />
+          <div className="hidden items-center gap-1.5 sm:flex">
+            <Button variant="ghost" size="icon" aria-label={t("download")} onClick={download}><Download /></Button>
+            <Button variant="outline" size="sm" onClick={() => inputRef.current?.click()}><FileUp />{t("replace")}</Button>
+          </div>
         </div>
       </div>
+      <p className="border-b border-border/70 bg-muted/20 px-3 py-1.5 text-center text-[11px] text-muted-foreground sm:hidden">{t("mobileTip")}</p>
       <div ref={readerRef} tabIndex={0} aria-label={t("reader")} onKeyDown={(event) => {
         if (event.target !== event.currentTarget) return;
         if (event.key === "ArrowRight" || event.key === "PageDown") { event.preventDefault(); goToPage(page + 1); }
         if (event.key === "ArrowLeft" || event.key === "PageUp") { event.preventDefault(); goToPage(page - 1); }
-      }} className="flex h-[calc(100svh-14rem)] min-h-[480px] min-w-0 items-start justify-center overflow-auto bg-slate-200/70 p-6 outline-none dark:bg-slate-950/70">
-        <PdfPage key={`${page}-${rotation}-${zoom ?? "fit"}`} document={opened.document} pageNumber={page} width={width} zoom={zoom} rotation={rotation} onError={showRenderError} onScale={rememberScale} />
+      }} onDoubleClick={() => setZoom((current) => current === null ? Math.max(1.25, currentScaleRef.current * 2) : null)} className={cn("h-[calc(100svh-18rem)] min-h-[360px] min-w-0 overflow-auto bg-slate-200/70 p-3 outline-none touch-manipulation dark:bg-slate-950/70 sm:h-[calc(100svh-14rem)] sm:min-h-[480px] sm:p-6", focused && "h-[calc(100svh-14rem)] sm:h-[calc(100svh-10rem)]")}>
+        <div className="flex w-max min-w-full justify-center"><PdfPage key={`${page}-${rotation}-${zoom ?? "fit"}`} document={opened.document} pageNumber={page} width={width} zoom={zoom} rotation={rotation} onError={showRenderError} onScale={rememberScale} /></div>
       </div>
     </section>}
   </main>;

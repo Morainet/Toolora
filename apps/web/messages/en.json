@@ -10,6 +10,9 @@
     "expandSidebar": "Expand sidebar",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
+    "enterFocus": "Full-screen view",
+    "exitFocus": "Exit full screen",
+    "focusMode": "Full-screen view",
     "tagline": "Fast, private, local-first developer tools",
     "description": "An extensible local-first toolkit for JSON, logs, Word, Excel, PDF, and more. Everything runs in your browser.",
     "footerPrivacy": "Your data never leaves your browser",
@@ -414,7 +417,8 @@
     "rotate": "Rotate clockwise",
     "download": "Download original file",
     "replace": "Open another file",
-    "reader": "PDF reading area"
+    "reader": "PDF reading area",
+    "mobileTip": "Zoom in, then drag sideways to inspect the page"
   },
   "fileParser": {
     "choose": "Choose file",
@@ -428,6 +432,7 @@
     "addRow": "Add row",
     "export": "Export Excel",
     "editableHint": "Click a cell to edit it",
+    "swipeColumns": "Swipe sideways to see more columns",
     "wordDropTitle": "Drop a Word file to extract text",
     "excelDropTitle": "Drop an Excel file to start editing",
     "wrongType": "Wrong file type for this tool. {format}.",

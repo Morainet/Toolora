@@ -5,6 +5,7 @@ import { AlertCircle, ChevronDown, ChevronRight, Clipboard, Download, FileSearch
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { useToolFocus } from "@/components/layout/tool-focus-context";
 import { filterLogEntries, levelGroup, parseLog, type LogEntry, type LogFilterLevel } from "@/lib/log-parser";
 import { cn } from "@/lib/utils";
 
@@ -50,6 +51,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
 
 export function LogViewer() {
   const t = useTranslations("logViewer");
+  const focused = useToolFocus();
   const inputRef = useRef<HTMLInputElement>(null);
   const [sourceText, setSourceText] = useState("");
   const [appliedText, setAppliedText] = useState("");
@@ -148,7 +150,7 @@ export function LogViewer() {
       <input ref={inputRef} type="file" accept=".log,.txt,.jsonl,.ndjson,.json,text/plain,application/x-ndjson" className="sr-only" tabIndex={-1} aria-hidden="true" onChange={(event) => { void loadFile(event.target.files?.[0]); event.currentTarget.value = ""; }} />
 
       <div className={cn("grid min-w-0 gap-4", hasResults && showSource && "lg:grid-cols-[minmax(300px,0.38fr)_minmax(0,1fr)] lg:items-start")} onDragOver={(event) => { if (event.dataTransfer.types.includes("Files")) event.preventDefault(); }} onDrop={(event) => { if (event.dataTransfer.files.length) { event.preventDefault(); void loadFile(event.dataTransfer.files[0]); } }}>
-      <section id="log-source-panel" className={cn("flex min-w-0 flex-col overflow-hidden rounded-xl border border-border/80 bg-card shadow-soft", hasResults && "lg:h-[calc(100svh-10rem)] lg:min-h-[520px]", hasResults && !showSource && "hidden")} aria-labelledby="log-source-title">
+      <section id="log-source-panel" className={cn("flex min-w-0 flex-col overflow-hidden rounded-xl border border-border/80 bg-card shadow-soft", hasResults && (focused ? "lg:h-[calc(100svh-7rem)] lg:min-h-[520px]" : "lg:h-[calc(100svh-10rem)] lg:min-h-[520px]"), hasResults && !showSource && "hidden")} aria-labelledby="log-source-title">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-muted/20 px-4 py-3 sm:px-5">
           <div><h2 id="log-source-title" className="text-sm font-semibold">{t("sourceTitle")}</h2><p className="mt-0.5 text-xs text-muted-foreground">{sourceName ?? t("sourceHint")}</p></div>
           <div className="flex flex-wrap gap-2">
@@ -165,7 +167,7 @@ export function LogViewer() {
         </div>
       </section>
 
-      {hasResults && <section className="flex min-w-0 flex-col overflow-hidden rounded-xl border border-border/80 bg-card shadow-soft lg:h-[calc(100svh-10rem)] lg:min-h-[520px]" aria-labelledby="log-results-title">
+      {hasResults && <section className={cn("flex min-w-0 flex-col overflow-hidden rounded-xl border border-border/80 bg-card shadow-soft lg:min-h-[520px]", focused ? "lg:h-[calc(100svh-7rem)]" : "lg:h-[calc(100svh-10rem)]")} aria-labelledby="log-results-title">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-5"><div><h2 id="log-results-title" className="text-base font-semibold">{t("resultsTitle")}</h2><p className="mt-0.5 text-xs text-muted-foreground">{t("summary", { entries: entries.length, lines: appliedText.replace(/\r\n?/g, "\n").trimEnd().split("\n").length })}{draftChanged && <span className="ml-2 font-medium text-warning">· {t("pendingChanges")}</span>}</p></div><div className="flex flex-wrap gap-2"><Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()}><Upload className="mr-1.5 h-4 w-4" />{t("chooseFile")}</Button><Button type="button" variant="outline" size="sm" onClick={() => setShowSource((value) => !value)} aria-expanded={showSource} aria-controls="log-source-panel">{showSource ? <PanelLeftClose className="mr-1.5 h-4 w-4" /> : <PanelLeftOpen className="mr-1.5 h-4 w-4" />}{showSource ? t("hideSource") : t("editSource")}</Button><Button type="button" variant="outline" size="sm" onClick={exportResults} disabled={filtered.length === 0}><Download className="mr-1.5 h-4 w-4" />{t("export")}</Button></div></div>
         <div className="grid grid-cols-2 gap-2 border-b border-border/80 bg-muted/10 px-4 py-3 sm:grid-cols-4 sm:px-5">
           <Insight label={t("insights.total")} value={counts.ALL} onClick={() => setLevel("ALL")} active={level === "ALL"} />
