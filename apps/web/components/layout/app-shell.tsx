@@ -197,7 +197,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           )}
         </header>
         <main className={toolFocused ? "min-h-[calc(100svh-3rem)]" : "min-h-[calc(100vh-9rem)]"}>{children}</main>
-        {!toolFocused && <SiteFooter />}
+        {!toolFocused && pathname !== "/xmind-viewer" && <SiteFooter />}
       </div>
     </div>
     </ToolFocusContext.Provider>
