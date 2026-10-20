@@ -2,6 +2,8 @@
 
 import type { PDFDocumentProxy } from "pdfjs-dist";
 export type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
+export { openXmind, parseXmindJson, parseXmindXml, XmindFormatError } from "./xmind";
+export type { XmindTopic, XmindSheet, XmindWorkbook } from "./xmind";
 
 export type SupportedFileKind = "word" | "excel" | "pdf";
 

@@ -105,6 +105,11 @@
       "title": "PDF Reader",
       "short": "PDF Reader",
       "description": "Open PDFs in your browser to read, zoom, and rotate pages without installing a reader."
+    },
+    "xmind-viewer": {
+      "title": "XMind Viewer",
+      "short": "XMind Viewer",
+      "description": "Open .xmind files locally in your browser, switch sheets, and explore the mind map."
     }
   },
   "jsonWorkspace": {
@@ -394,8 +399,32 @@
       "excelTitle": "Excel File Parser — No Excel Required",
       "excelDescription": "Read XLSX or XLS worksheets locally in your browser.",
       "pdfTitle": "PDF Reader — No Installation Required",
-      "pdfDescription": "Open PDFs locally in your browser with page navigation, zoom, and rotation."
+      "pdfDescription": "Open PDFs locally in your browser with page navigation, zoom, and rotation.",
+      "xmindTitle": "XMind Viewer — No Installation Required",
+      "xmindDescription": "Open XMind mind maps locally in your browser and explore sheets and topics."
     }
+  },
+  "xmindViewer": {
+    "privacy": "Opened locally in your browser; files are never uploaded",
+    "choose": "Choose XMind file",
+    "opening": "Opening…",
+    "dropTitle": "Open an XMind mind map",
+    "dropHint": "Drop a .xmind file here or choose one from your computer. New and legacy formats are supported.",
+    "wrongType": "Please choose a .xmind file.",
+    "tooLarge": "This file is too large to preview.",
+    "openFailed": "Cannot read this XMind file. Check that it is complete and not encrypted.",
+    "summary": "{sheets} sheets · {topics} topics",
+    "zoomOut": "Zoom out",
+    "zoomIn": "Zoom in",
+    "replace": "Open another file",
+    "sheets": "Sheets",
+    "mapRegion": "Mind map preview",
+    "details": "Topic details",
+    "children": "{count} child topics",
+    "hint": "Select a topic for details. Use the control in its lower-right corner to collapse or expand it.",
+    "floating": "Floating topics",
+    "expand": "Expand children",
+    "collapse": "Collapse children"
   },
   "pdfViewer": {
     "privacy": "Opened locally in your browser; files are never uploaded",

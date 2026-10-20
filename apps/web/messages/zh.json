@@ -105,6 +105,11 @@
       "title": "PDF 阅读器",
       "short": "PDF 阅读",
       "description": "在浏览器中直接打开 PDF，逐页查看、缩放和旋转；无需安装阅读器。"
+    },
+    "xmind-viewer": {
+      "title": "XMind 预览",
+      "short": "XMind 预览",
+      "description": "在浏览器本地打开 .xmind 文件，查看思维导图、切换画布和浏览主题。"
     }
   },
   "jsonWorkspace": {
@@ -394,8 +399,32 @@
       "excelTitle": "Excel 文件解析 —— 无需安装 Excel",
       "excelDescription": "在浏览器本地读取 XLSX 或 XLS 工作表。",
       "pdfTitle": "PDF 阅读器 —— 无需安装软件",
-      "pdfDescription": "在浏览器本地打开 PDF，支持逐页阅读、缩放和旋转。"
+      "pdfDescription": "在浏览器本地打开 PDF，支持逐页阅读、缩放和旋转。",
+      "xmindTitle": "XMind 预览 —— 无需安装 XMind",
+      "xmindDescription": "在浏览器本地打开 XMind 思维导图，查看画布和主题结构。"
     }
+  },
+  "xmindViewer": {
+    "privacy": "仅在本地浏览器中打开，不会上传文件",
+    "choose": "选择 XMind 文件",
+    "opening": "正在打开…",
+    "dropTitle": "打开 XMind 思维导图",
+    "dropHint": "拖入 .xmind 文件，或从电脑选择；支持新版和旧版格式。",
+    "wrongType": "请选择 .xmind 文件。",
+    "tooLarge": "文件过大，暂不支持预览。",
+    "openFailed": "无法读取此 XMind 文件，请确认文件完整且未加密。",
+    "summary": "{sheets} 个画布 · {topics} 个主题",
+    "zoomOut": "缩小",
+    "zoomIn": "放大",
+    "replace": "打开其他文件",
+    "sheets": "画布",
+    "mapRegion": "思维导图预览区域",
+    "details": "主题详情",
+    "children": "{count} 个子主题",
+    "hint": "点击主题查看详情；点击主题右下角的按钮折叠或展开。",
+    "floating": "浮动主题",
+    "expand": "展开子主题",
+    "collapse": "折叠子主题"
   },
   "pdfViewer": {
     "privacy": "仅在本地浏览器中打开，不会上传文件",

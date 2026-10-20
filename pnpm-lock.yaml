@@ -143,6 +143,9 @@ importers:
 
   packages/file-parser:
     dependencies:
+      jszip:
+        specifier: 3.10.2
+        version: 3.10.2
       mammoth:
         specifier: ^1.8.0
         version: 1.13.0

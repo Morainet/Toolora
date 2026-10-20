@@ -17,6 +17,10 @@ describe("tool registry", () => {
     expect(TOOLKIT.get("log-viewer")).toMatchObject({ href: "/log-viewer", category: "code", renderer: "log-viewer", status: "available" });
   });
 
+  it("registers the XMind preview as a document utility", () => {
+    expect(TOOLKIT.get("xmind-viewer")).toMatchObject({ href: "/xmind-viewer", category: "utility", renderer: "xmind-viewer", status: "available" });
+  });
+
   it("uses portable icon names rather than platform-dependent emoji", () => {
     for (const tool of TOOLKIT.all) {
       expect(tool.icon).toMatch(/^[a-z]+(?:-[a-z]+)*$/);

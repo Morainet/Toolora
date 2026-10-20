@@ -2,7 +2,7 @@
   "name": "@parsy/file-parser",
   "version": "0.1.0",
   "private": true,
-  "description": "Local browser parsers for Word, Excel, and PDF files.",
+  "description": "Local browser parsers and viewers for Word, Excel, PDF, and XMind files.",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -13,7 +13,9 @@
   },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "scripts": {
     "lint": "echo \"(file-parser) lint: no-op\"",
     "typecheck": "tsc --noEmit",
@@ -21,6 +23,7 @@
     "clean": "echo \"(file-parser) nothing to clean\""
   },
   "dependencies": {
+    "jszip": "3.10.2",
     "mammoth": "^1.8.0",
     "pdfjs-dist": "^6.2.108",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
