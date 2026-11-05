@@ -3,6 +3,30 @@ import type { XmindSheet, XmindTopic } from "@parsy/file-parser";
 export interface PositionedTopic { topic: XmindTopic; x: number; y: number; parentId?: string; childCount: number }
 export interface MindMapLayout { nodes: PositionedTopic[]; width: number; height: number }
 
+/** Fit up to two readable lines inside a topic card; count wide CJK glyphs as two units. */
+export function topicTitleLines(title: string, hasChildren: boolean): string[] {
+  const chars = Array.from(title.trim());
+  const limits = [24, hasChildren ? 19 : 24];
+  const lines: string[] = [];
+  let offset = 0;
+  for (const limit of limits) {
+    let width = 0;
+    let line = "";
+    while (offset < chars.length) {
+      const char = chars[offset];
+      const size = /[^\u0000-\u00ff]/u.test(char) ? 2 : 1;
+      if (width + size > limit) break;
+      line += char;
+      width += size;
+      offset++;
+    }
+    if (line || lines.length === 0) lines.push(line);
+    if (offset >= chars.length) break;
+  }
+  if (offset < chars.length) lines[lines.length - 1] = `${lines[lines.length - 1].trimEnd()}…`;
+  return lines;
+}
+
 const NODE_WIDTH = 220;
 const NODE_HEIGHT = 62;
 const COLUMN_GAP = 90;

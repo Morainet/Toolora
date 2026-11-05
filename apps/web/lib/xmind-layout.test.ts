@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { XmindTopic } from "@parsy/file-parser";
-import { layoutMindMap, layoutXmindSheet } from "./xmind-layout";
+import { layoutMindMap, layoutXmindSheet, topicTitleLines } from "./xmind-layout";
 
 const root: XmindTopic = { id: "root", title: "Root", children: [
   { id: "a", title: "A", children: [{ id: "a1", title: "A1", children: [] }] },
@@ -30,5 +30,11 @@ describe("XMind map layout", () => {
     const byId = Object.fromEntries(layout.nodes.map((node) => [node.topic.id, node]));
     expect(byId.floating.y).toBeGreaterThan(byId.b.y);
     expect(byId.child.parentId).toBe("floating");
+  });
+
+  it("shows two lines of a long title before truncating", () => {
+    expect(topicTitleLines("这个主题的标题比一行更长，需要第二行", true)).toHaveLength(2);
+    expect(topicTitleLines("A short title", false)).toEqual(["A short title"]);
+    expect(topicTitleLines("很长的主题标题".repeat(10), true)[1]).toMatch(/…$/);
   });
 });
